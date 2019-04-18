@@ -29,7 +29,6 @@ const init = (auth, data) => {
     })
     .then(locales => {
       formatLocales(locales)
-      console.log("heelo")
     })
     .catch(e => console.log(e));
 
@@ -80,7 +79,6 @@ const init = (auth, data) => {
       append: false,
       path: directory + filename
     });
-    console.log(data)
     csvWriter
       .writeRecords(data)
       .then(()=> console.log('The CSV file was written successfully'));

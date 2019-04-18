@@ -53,7 +53,6 @@ const init = (auth, data) => {
           "momentMapping": ulc.momentMapping,
           "legacyMapping": ulc.legacyMapping,
         },
-        "relationships": {},
       }
 
       if (ulc.layoutId) {
@@ -62,10 +61,10 @@ const init = (auth, data) => {
             "data": {
               "type": "layouts",
               "id": ulc.layoutId
-            }
-          }
+            },
+          },
         }
-        locale.relationships = liveLayout
+        locale["relationships"] = liveLayout
       }
 
       setTimeout(function(){
@@ -76,7 +75,6 @@ const init = (auth, data) => {
 
   const postLocale = (lc) => {
     const apiEndpoint = constructV4ApiEndpoint(data.enviroment, LOCALE_ENDPOINT);
-
     let settings = {
       url: apiEndpoint,
       method: 'post',

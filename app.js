@@ -7,8 +7,9 @@ const getToken = require('./scripts/getToken.js');
 const getLocales = require('./scripts/getLocales.js');
 const createLocales = require('./scripts/createLocales.js');
 const updateLocales = require('./scripts/updateLocales.js');
+const updateLiveLayout = require('./scripts/updateLiveLayout.js');
 const nikeCreateLayouts = require('./scripts/nikeLayouts.js');
- 
+const getStoreServices = require('./scripts/store_services/get.js');
 
 var companyQuestionsPrompt = [
   { type: 'input', name: 'company', message: 'Enter the company code' },
@@ -26,8 +27,11 @@ var scriptQuestionsPrompt = [
       'Get Locales',
       'Create Locales',
       'Update Locales',
+      'Update Live Layout',
       new inquirer.Separator(),
       'Nike Create Layouts',
+      new inquirer.Separator(),
+      'Get Store Services',
     ]
   },
 ];
@@ -53,8 +57,12 @@ const chooseScript = (auth, data) => {
         createLocales.init(auth, data);
       } else if (answer.choose_script == 'Update Locales') {
         updateLocales.init(auth, data)
+      } else if (answer.choose_script == 'Update Live Layout') {
+        updateLiveLayout.init(auth, data)
       } else if (answer.choose_script == 'Nike Create Layouts') {
         nikeCreateLayouts.init(auth, data)
+      } else if (answer.choose_script == 'Get Store Services') {
+        getStoreServices.init(auth, data)
       } else {
         ui.log.write("Script Unavaliable");
       }

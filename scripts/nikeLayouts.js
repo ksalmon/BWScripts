@@ -51,8 +51,10 @@ const init = (auth, data) => {
         .then(data => {
           if (data && data.current && data.current.versions) {
             setTimeout(function(){
-              getHeaderFooter(locale, data.previous)
+              getHeaderFooter(locale, data.current)
             }, index * 500);
+          } else if (!data) {
+            console.log('No data for locale: ', locale)
           } else {    
             console.log('No version for locale: ', locale)
           }
@@ -101,18 +103,25 @@ const init = (auth, data) => {
         "type": "layouts",
         "attributes": {
           "comment": "Nike Layout for " + locale.bwLocale + " -- Time: "+ Date.now(),
-          "headHtml": "TEST",
-          "headerHtml": "TEST",
-          "footerHtml": "TEST",
+          "headHtml": head,
+          "headerHtml": header,
+          "footerHtml": footer,
         },
-      }
+        "relationships": {
+          "locale": {
+            "data": {
+              "type": "locales",
+              "id": locale.bwLocale
+            }
+          }
+        },
+      },
     }
     postToLayouts(locale, layout)
   }
 
   async function postToLayouts(locale, layoutData) {
     const apiEndpoint = constructV4ApiEndpoint(data.enviroment, LAYOUTS_ENDPOINT );
-    console.log(auth.token)
 
     let settings = {
       url: apiEndpoint,
@@ -134,20 +143,17 @@ const init = (auth, data) => {
   }
 
   const printToCSV = (locale) => {
-    let dir = clientDirectory('nike', data.enviroment)
-
     const csvWriter = createCsvWriter({
       header: [
           {id: 'locale', title: 'Locale'},
           {id: 'layoutId', title: 'Layout ID'},
       ],
       append: true,
-      path: clientDirectory('nike', data.enviroment) + '/layoutIds.csv'
+      path: clientDirectory('nike', data.enviroment, '/layoutIds.csv') 
     });
-    console.log(locale)
     csvWriter
-      .writeRecords(locale)
-      .then(()=> console.log('Added Layout'));
+      .writeRecords([locale])
+      .then(()=> console.log('Added Layout: ', locale));
   }
 
   // Helpers

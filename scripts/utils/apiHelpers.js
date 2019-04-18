@@ -10,15 +10,18 @@ const constructApiRoot = (company, envo) => {
 }
 
 // Endpoint Helpers
-const constructV3ApiEndpoint = (company, envo, path) => {
+const constructV3ApiEndpoint = (company, envo, path, apiKey = null) => {
   let fetchUrl = ''
   fetchUrl += 'https://' + company
   if (envo == 'production') {
     fetchUrl += 'brickworksoftware.com'
   } else {
-    fetchUrl += '-' + envo + 'brickworksoftware.com'
+    fetchUrl += '-' + envo + '.brickworksoftware.com'
   }
   fetchUrl += path
+  if (apiKey) {
+    fetchUrl += '?api_key=' + apiKey
+  }
   return fetchUrl
 }
 

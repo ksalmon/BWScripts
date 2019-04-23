@@ -46,7 +46,7 @@ const init = (auth, data) => {
         "type": 'locale',
         "id": ulc.id,
         "attributes": {
-          "supported": true,
+          "supported": JSON.parse(ulc.supported),
           "reactMapping": ulc.reactMapping,
           "momentMapping": ulc.momentMapping,
           "legacyMapping": ulc.legacyMapping,
@@ -68,6 +68,7 @@ const init = (auth, data) => {
 
       setTimeout(function(){
         postLocale({data: locale});
+        // console.log({data: locale});
       }, index * 1000);
     })  
   };

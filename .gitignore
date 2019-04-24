@@ -1,0 +1,10 @@
+yarn-errors.log
+node_modules
+npm-debug.log
+.DS_Store
+/build
+.idea
+*.sublime-*
+clipboard.js
+*.bak
+.tmp

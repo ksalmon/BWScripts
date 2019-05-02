@@ -1,0 +1,4 @@
+store_id,store_number?,service_id,appointments_enabled,associate_required
+123,FALSE,123,TRUE,FALSE
+123,TRUE,ABC,FALSE,TRUE
+123,FALSE,890,FALSE,FALSE

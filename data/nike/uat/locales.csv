@@ -68,7 +68,7 @@ be/en,true,true,en-BE,be,en_GB
 be/de,true,true,de-BE,nl-be,de_DE
 be,true,true,nl-BE,nl-be,nl_NL
 at,true,true,de-AT,de-at,de_DE
-ar,true,true,es-AR,ar,es_ES
+ar,true,true,es-ES,es,es_ES
 ae,true,true,en-AE,en,en_GB
 ru_RU,true,false,ru-RU,ru,ru_RU
 en_US,true,false,en-US,en,en_US

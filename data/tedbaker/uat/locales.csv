@@ -1,0 +1,13 @@
+id,supported,custom,reactMapping,momentMapping,legacyMapping
+au,true,true,en-AU,en-au,en_GB
+oeu,true,true,en-GB,en-gb,en_GB
+seu,true,true,en-GB,fr,en_GB
+neu,true,true,en-GB,sv,en_GB
+nl,true,true,nl-NL,nl,en_GB
+fr,true,true,fr-FR,fr,fr_FR
+de,true,true,de-DE,de,de_DE
+ie,true,true,en-IE,en-ie,en_GB
+ca,true,true,en-CA,en-ca,en_US
+us,true,true,en-US,en,en_US
+uk,true,true,en-GB,en-gb,en_GB
+row,true,true,en-GB,en-gb,en_GB

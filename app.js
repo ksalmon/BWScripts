@@ -24,14 +24,17 @@ var scriptQuestionsPrompt = [
     name: 'choose_script', 
     message: 'Choose a Script',
     choices: [
+      new inquirer.Separator(),
       'Get Locales',
       'Create Locales',
       'Update Locales',
+      new inquirer.Separator(),
       'Update Live Layout',
       new inquirer.Separator(),
       'Nike Create Layouts',
       new inquirer.Separator(),
       'Get Store Services',
+      'Create Store Services'
     ]
   },
 ];
@@ -63,6 +66,8 @@ const chooseScript = (auth, data) => {
         nikeCreateLayouts.init(auth, data)
       } else if (answer.choose_script == 'Get Store Services') {
         getStoreServices.init(auth, data)
+      } else if (answer.choose_script == 'Create Store Services') {
+        ui.log.write('In progress!')
       } else {
         ui.log.write("Script Unavaliable");
       }

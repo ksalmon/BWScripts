@@ -43,13 +43,34 @@ const init = (data) => {
         }
       })
       .on('end',function(){
-        parseCsvData(storeServices)
+        // parseCsvData(storeServices)
+        console.log(storeServices)
       });
   };
 
-  const parseCsvData = (services) => {
-    console.log(services)
+  const parseCsvData = (svc) => {
+    services = [];
+    svc.forEach((usvc, index) => {
+      let service = {
+        'type': 'service',
+        'store_id': usvc.store_id,
+        'attributes': {
+          'is_store_number': usvc.is_store_number,
+          'service_id': usvc.service_id,
+          'appointments_enabled': usvc.appointments_enabled,
+          'associate_required': usvc.associate_required
+        }
+      }
+
+      setTimeout(function(){
+        postService({data: service});
+      }, index * 1000)
+    })
   };
+
+  const postService = (svc) => {
+    console.log(svc)
+  }
 }
 
 

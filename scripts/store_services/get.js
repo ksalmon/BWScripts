@@ -1,10 +1,10 @@
-const { constructApiRoot, constructV3ApiEndpoint } = require('../utils/apiHelpers');
-const { INDEX_STORE_SERVICE_ENDPOINT } = require('../utils/endpoints');
-const api = require('../utils/callApi.js')
+const { constructApiRoot, constructV3ApiEndpoint } = require('../utils/api/apiHelpers');
+const { INDEX_STORE_SERVICE_ENDPOINT } = require('../utils/api/endpoints');
+const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('../utils/csvHelpers');
+const { clientDirectory } = require('../utils/helpers/csvHelpers');
 const csv = require('csv-parser')
 const fs = require('fs')
 const mkdirp = require('mkdirp');

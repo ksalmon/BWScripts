@@ -4,7 +4,7 @@
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('../utils/csvHelpers');
+const { clientDirectory } = require('../utils/helpers/csvHelpers');
 const csv = require('csv-parser')
 const fs = require('fs')
 const mkdirp = require('mkdirp');
@@ -43,13 +43,11 @@ const init = (data) => {
         }
       })
       .on('end',function(){
-        // parseCsvData(storeServices)
-        console.log(storeServices)
+        parseCsvData(storeServices)
       });
   };
 
   const parseCsvData = (svc) => {
-    services = [];
     svc.forEach((usvc, index) => {
       let service = {
         'type': 'service',
@@ -73,9 +71,6 @@ const init = (data) => {
   }
 }
 
-
-let data = {
-  company: "nike",
-  enviroment: "uat"
+module.exports = {
+  init,
 }
-init(data);

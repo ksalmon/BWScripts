@@ -1,6 +1,6 @@
-const { constructApiRoot, constructV4ApiEndpoint } = require('./utils/apiHelpers');
-const { AUTH_ENDPOINT } = require('./utils/endpoints');
-const api = require('./utils/callApi.js')
+const { constructApiRoot, constructV4ApiEndpoint } = require('../api/apiHelpers');
+const { AUTH_ENDPOINT } = require('../api/endpoints');
+const api = require('../api/callApi.js')
 
 const fetchToken = (a) => {
   let apiRoot = constructApiRoot(a.company, a.enviroment)

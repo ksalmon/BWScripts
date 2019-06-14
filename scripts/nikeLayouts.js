@@ -22,7 +22,7 @@ const init = (auth, data) => {
   inq.prompt(filenameQuestionPrompt)
     .then(answer => {
       filename = (answer.filename == '') ? defaultfilename : answer.filename;
-      directory = clientDirectory('nike', data.enviroment, filename)
+      directory = clientDirectory('nike', data.environment, filename)
       readCsvFile(directory)
     });
 
@@ -121,7 +121,7 @@ const init = (auth, data) => {
   }
 
   async function postToLayouts(locale, layoutData) {
-    const apiEndpoint = constructV4ApiEndpoint(data.enviroment, LAYOUTS_ENDPOINT );
+    const apiEndpoint = constructV4ApiEndpoint(data.environment, LAYOUTS_ENDPOINT );
 
     let settings = {
       url: apiEndpoint,
@@ -136,7 +136,7 @@ const init = (auth, data) => {
           locale: locale.bwLocale,
           layoutId: response.data.id
         }
-        mkdirp(clientDirectory('nike', data.enviroment), function(err) { 
+        mkdirp(clientDirectory('nike', data.environment), function(err) { 
           printToCSV(layout)
         });
       })
@@ -149,7 +149,7 @@ const init = (auth, data) => {
           {id: 'layoutId', title: 'Layout ID'},
       ],
       append: true,
-      path: clientDirectory('nike', data.enviroment, '/layoutIds.csv') 
+      path: clientDirectory('nike', data.environment, '/layoutIds.csv') 
     });
     csvWriter
       .writeRecords([locale])

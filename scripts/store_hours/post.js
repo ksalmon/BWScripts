@@ -9,7 +9,7 @@ const fs = require('fs')
 
 // var questionsPrompt = [
 //   { type: 'input', name: 'company', message: 'Which company would you like to load store hours for?' },
-//   { type: 'input', name: 'enviroment', message: 'Which enviroment?' },
+//   { type: 'input', name: 'environment', message: 'Which environment?' },
 //   { type: 'input', name: 'api_key', message: 'Enter a valid API key' },
 // ];
 

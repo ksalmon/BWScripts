@@ -23,7 +23,7 @@ const init = (auth, data) => {
   inq.prompt(filenameQuestionPrompt)
     .then(async (answer) => {
       filename = (answer.filename == '') ? defaultfilename : answer.filename;
-      directory = clientDirectory(data.company, data.enviroment)
+      directory = clientDirectory(data.company, data.environment)
       const locales = await getLocales();
       return locales.data
     })
@@ -33,7 +33,7 @@ const init = (auth, data) => {
     .catch(e => console.log(e));
 
   const getLocales = () => {
-    const apiEndpoint = constructV4ApiEndpoint(data.enviroment, LOCALE_ENDPOINT );
+    const apiEndpoint = constructV4ApiEndpoint(data.environment, LOCALE_ENDPOINT );
 
     let settings = {
       url: apiEndpoint,

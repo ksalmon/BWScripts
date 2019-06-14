@@ -1,9 +1,9 @@
 // Helpers
-const inquirer = require('inquirer');
-const ui = new inquirer.ui.BottomBar();
+const inq = require('inquirer');
+const ui = new inq.ui.BottomBar();
 
 // Scripts
-const getToken = require('./scripts/utils/auth/getToken')
+const getToken = require('./scripts/utils/auth/getToken.js')
 
 // Locale Scripts
 const getLocales = require('./scripts/locales/get.js')
@@ -18,80 +18,132 @@ const nikeCreateLayouts = require('./scripts/nikeLayouts.js');
 const getStoreServices = require('./scripts/store_services/get.js');
 const createStoreServices = require('./scripts/store_services/post.js')
 
-var companyQuestionsPrompt = [
-  { type: 'input', name: 'company', message: 'Enter the company code' },
-  { type: 'list', name: 'enviroment', message: 'Which environment?', choices: [
-    'Staging',
-    'UAT',
-    'Production' 
-  ]},
-  { type: 'list', name: 'type', message: 'Which endpoint?', choices: [
-      'Locales',
-      'Services',
-      'Users',
-      'Layouts'
-  ]},
-  { type: 'input', name: 'username', message: 'Enter Username/Email' },
-  { type: 'password', mask: '*', name: 'password', message: 'Enter password' },
-];
-
-var scriptQuestionsPrompt = [
+var startQuestions = [
   { 
-    type: 'list', 
-    name: 'choose_script', 
-    message: 'Choose a Script',
-    choices: [
-      new inquirer.Separator(),
-      'Get Locales',
-      'Create Locales',
-      'Update Locales',
-      new inquirer.Separator(),
-      'Get Live Layout',
-      'Create Live Layout',
-      'Update Live Layout',
-      new inquirer.Separator(),
-      'Nike Create Layouts',
-      new inquirer.Separator(),
-      'Get Store Services',
-      'Create Store Services',
-      'Update Store Services'
-    ]
+      type: 'input', 
+      name: 'company', 
+      message: 'Enter the company name', 
+      validate: (company) => {
+          return company !== '';
+      }},
+  { 
+      type: 'list', 
+      name: 'environment', 
+      message: 'Which environment?', 
+      choices: [
+          'Staging',
+          'UAT',
+          'Production'
+      ]
+  },
+  { 
+      type: 'list', 
+      name: 'type', 
+      message: 'Please choose an option',
+      choices: [
+          'Locales',
+          'Services',
+          'Layouts',
+      ]
+  },
+  { 
+    type: 'input', 
+    name: 'username', 
+    message: 'Enter Username/Email' 
+  },
+  { 
+    type: 'password', 
+    mask: '*', 
+    name: 'password', 
+    message: 'Enter password' 
   },
 ];
 
-const init = () => {
-  ui.log.write("Before we get started, let's get some more information!");
-  inquirer.prompt(companyQuestionsPrompt)
-    .then(async (answers) => {
-      const auth = await getToken.fetchToken(answers);
-      chooseScript(auth, answers)
-      return
-    })
-    .catch(e => console.log(e));
-};
+var localeQuestions = [
+  {
+      type: 'list',
+      name: 'localePrompt',
+      choices: [
+          'Get Locales',
+          'Create Locales',
+          'Update Locales',
+      ]
+  }
+]
 
-const chooseScript = (auth, data) => {
-  ui.log.write("Great, what script would you like to run!?");
-  inquirer.prompt(scriptQuestionsPrompt)
-    .then(answer => {
-      if (answer.choose_script == 'Get Locales') {
-        getLocales.init(auth, data);
-      } else if (answer.choose_script == 'Create Locales') {
-        createLocales.init(auth, data);
-      } else if (answer.choose_script == 'Update Locales') {
-        updateLocales.init(auth, data)
-      } else if (answer.choose_script == 'Update Live Layout') {
-        updateLiveLayout.init(auth, data)
-      } else if (answer.choose_script == 'Nike Create Layouts') {
-        nikeCreateLayouts.init(auth, data)
-      } else if (answer.choose_script == 'Get Store Services') {
-        getStoreServices.init(auth, data)
-      } else if (answer.choose_script == 'Create Store Services') {
-        createStoreServices.init(data)
-      } else {
-        ui.log.write("Script Unavaliable");
-      }
-    });
-};
+var servicesQuestions = [
+  {
+      type: 'list',
+      name: 'servicesPrompt',
+      choices: [
+          'Get Store Services',
+          'Create Store Services',
+          'Update Store Services'
+      ]
+  }
+]
+
+var layoutsQuestions = [
+  {
+      type: 'list',
+      name: 'layoutPrompt',
+      choices: [
+          'Get Live Layout',
+          'Create Live Layout',
+          'Update Live Layout'
+      ]
+  }
+]
+
+const init = () => {
+  ui.log.write('Just a few questions before we begin.');
+  inq.prompt(startQuestions)
+  .then(async(answers) => {
+      const auth = await getToken.fetchToken(answers);
+      scriptChoice(auth, answers)
+  })
+  .catch(err => console.log(err))
+}
+
+const scriptChoice = (auth, data) => {
+  ui.log.write('What are you trying to do?')
+  if(data.type == 'Locales') {
+      inq.prompt(localeQuestions)
+      .then(answer => {
+          if(answer.localePrompt == 'Get Locales') {
+              getLocales.init(auth, data);
+          } else if(answer.localePrompt == 'Create Locales') {
+              createLocales.init(auth, data)
+          } else if(answer.localePrompt == 'Update Locales') {
+              updateLocales.init(auth, data)
+          }
+      })
+  } else if(data.type == 'Services') {
+      inq.prompt(servicesQuestions)
+      .then(answer => {
+          if(answer.servicesPrompt == 'Get Store Services') {
+              getStoreServices.init(auth, data)
+          } else if(answer.servicesPrompt == 'Create Store Services') {
+              createStoreServices.init(data)
+          } else if(answer.servicesPrompt == 'Update Store Services') {
+              ui.log.write('In Progress')
+          }
+      })
+  } else if(data.type == 'Layouts') {
+      inq.prompt(layoutsQuestions)
+      .then(answer => {
+          if(answer.layoutsPrompt == 'Get Live Layouts') {
+              ui.log.write('In Progress')
+          } else if(answer.layoutsPrompt == 'Create Live Layouts') {
+              ui.log.write('In Progress')
+          } else if(answer.layoutsPrompt == 'Update Live Layouts') {
+              ui.log.write('In Progress')
+          }
+      })
+  }
+  else {
+    ui.log.write('Unavailable Script')
+  }
+}
 
 init();

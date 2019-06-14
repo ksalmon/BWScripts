@@ -24,7 +24,7 @@ const init = (auth, data) => {
   inq.prompt(filenameQuestionPrompt)
     .then(async (answers) => {
       filename = (answers.filename == '') ? defaultfilename : answers.filename;
-      directory = clientDirectory(data.company, data.enviroment)
+      directory = clientDirectory(data.company, data.environment)
       const services = await getStoreServices(answers.apiKey);
       return services
     })
@@ -34,7 +34,7 @@ const init = (auth, data) => {
     .catch(e => console.log(e));
 
   const getStoreServices = (apiKey) => {
-    const apiEndpoint = constructV3ApiEndpoint(data.company, data.enviroment, INDEX_STORE_SERVICE_ENDPOINT, apiKey );
+    const apiEndpoint = constructV3ApiEndpoint(data.company, data.environment, INDEX_STORE_SERVICE_ENDPOINT, apiKey );
 
     let settings = {
       url: apiEndpoint,

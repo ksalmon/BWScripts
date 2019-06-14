@@ -1,10 +1,10 @@
-const { constructApiRoot, constructV4ApiEndpoint } = require('../api/apiHelpers');
-const { AUTH_ENDPOINT } = require('../api/endpoints');
+const { constructApiRoot, constructV4ApiEndpoint } = require('../api/apiHelpers.js');
+const { AUTH_ENDPOINT } = require('../api/endpoints.js');
 const api = require('../api/callApi.js')
 
 const fetchToken = (a) => {
-  let apiRoot = constructApiRoot(a.company, a.enviroment)
-  let apiEndpoint = constructV4ApiEndpoint(a.enviroment, AUTH_ENDPOINT)
+  let apiRoot = constructApiRoot(a.company, a.environment)
+  let apiEndpoint = constructV4ApiEndpoint(a.environment, AUTH_ENDPOINT)
 
   let headerData = {
     "username": a.username,

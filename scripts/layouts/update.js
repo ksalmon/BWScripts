@@ -19,7 +19,7 @@ const init = (auth, data) => {
   inq.prompt(filenameQuestionPrompt)
     .then(answer => {
       filename = (answer.filename == '') ? defaultfilename : answer.filename;
-      directory = clientDirectory(data.company, data.enviroment, filename)
+      directory = clientDirectory(data.company, data.environment, filename)
       readCsvFile(directory)
     });
 
@@ -64,7 +64,7 @@ const init = (auth, data) => {
 
   const postLocale = (lc) => {
     const localePath = LOCALE_ENDPOINT + "/" + lc.data.id.replace("/", "%2F");
-    const apiEndpoint = constructV4ApiEndpoint(data.enviroment, localePath );
+    const apiEndpoint = constructV4ApiEndpoint(data.environment, localePath );
 
     let settings = {
       url: apiEndpoint,

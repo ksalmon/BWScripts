@@ -1,45 +1,45 @@
-// Api Root Helpers
-const constructApiRoot = (company, envo) => {
-  let fetchUrl = ''
-  fetchUrl += company
-  if (envo !== 'production' && envo !== 'demo') {
-    fetchUrl += '-' + envo 
-  } 
-  fetchUrl += '.brickworksoftware.com'
-  return fetchUrl
+// API Endpoints
+const bwUrl = '.brickworksoftware.com'
+
+const constructApiRoot = (company, env) => {
+    let baseUrl = '';
+    baseUrl += company;
+    if (env !== 'production' && env !== 'demo') {
+        baseUrl += '-' + env
+    }
+    baseUrl += bwUrl;
+    return baseUrl
 }
 
-// Endpoint Helpers
-const constructV3ApiEndpoint = (company, envo, path, apiKey = null) => {
-  let fetchUrl = ''
-  fetchUrl += 'https://' + company
-  if (envo == 'production') {
-    fetchUrl += 'brickworksoftware.com'
-  } else {
-    fetchUrl += '-' + envo + '.brickworksoftware.com'
-  }
-  fetchUrl += path
-  if (apiKey) {
-    fetchUrl += '?api_key=' + apiKey
-  }
-  return fetchUrl
+const constructV3ApiEndpoint = (company, env, path, apiKey = null) => {
+    let baseUrl = '';
+    baseUrl += 'https://' + company;
+    if(env == 'production') {
+        baseUrl += bwUrl
+    } else {
+        baseUrl += '-' + env + bwUrl 
+    }
+    baseUrl += path
+    if (apiKey) {
+        baseUrl += '?api_key=' + apiKey
+    }
+    return baseUrl
 }
 
-const constructV4ApiEndpoint = (envo, path) => {
-  let fetchUrl = ''
-  fetchUrl += 'https://api.'
-  if (envo == 'production') {
-    fetchUrl += 'brickworksoftware.com'
-  } else {
-    fetchUrl += 'bw-' + envo + '.com'
-  }
-  fetchUrl += path
-  return fetchUrl
+const constructV4ApiEndpoint = (env, path) => {
+    let baseUrl = '';
+    baseUrl += 'https://api.';
+    if (env == 'production') {
+        baseUrl += bwUrl
+    } else {
+        baseUrl += 'bw-' + env + '.com'
+    }
+    baseUrl += path
+    return baseUrl
 }
-
 
 module.exports = {
   constructApiRoot,
   constructV3ApiEndpoint,
   constructV4ApiEndpoint
-};
+}

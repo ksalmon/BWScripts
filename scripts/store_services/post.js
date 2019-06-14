@@ -1,6 +1,7 @@
-// const { constructApiRoot, constructV3ApiEndpoint } = require('./utils/apiHelpers');
-// const { LOCALE_ENDPOINT } = require('./utils/endpoints');
-// const api = require('./utils/callApi.js')
+const { constructApiRoot, constructV3ApiEndpoint } = require('../utils/api/apiHelpers.js');
+
+const { CREATE_STORE_SERVICE_ENDPOINT } = require('../utils/api/endpoints.js')
+const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
@@ -12,23 +13,25 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 
 var filenameQuestionPrompt = [
-  { type: 'password', name: 'api_key', message: 'Enter a valid API Key' },
+  { type: 'password', name: 'apiKey', message: 'Enter a valid API Key' },
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/store_services.csv"' }
 ];
 // Create Store Services from CSV
 const init = (data) => {
   var directory,
-      filename;
+      filename,
+      apiKey
 
   var defaultfilename = '/store_services.csv';
 
   inq.prompt(filenameQuestionPrompt)
     .then(async (answers) => {
       filename = (answers.filename == '') ? defaultfilename : answers.filename;
-      directory = clientDirectory(data.company, data.enviroment, filename)
+      directory = clientDirectory(data.company, data.environment, filename)
+      apiKey = answers.apiKey
       readCsvFile(directory)
     })
-    .catch(e => console.log(e));
+    .catch(err => console.log(err));
 
   const readCsvFile = (dir) => {
     var storeServices = [];
@@ -48,26 +51,37 @@ const init = (data) => {
   };
 
   const parseCsvData = (svc) => {
+    var bool 
     svc.forEach((usvc, index) => {
       let service = {
-        'type': 'service',
-        'store_id': usvc.store_id,
-        'attributes': {
-          'is_store_number': usvc.is_store_number,
-          'service_id': usvc.service_id,
-          'appointments_enabled': usvc.appointments_enabled,
-          'associate_required': usvc.associate_required
+        'store_id': Number(usvc.store_id),
+        'data': {
+          'store_service': {
+            'service_id': parseInt(usvc.service_id),
+            'appointments_enabled': bool = (usvc.appointments_enabled == "true"),
+            'associate_required': bool = (usvc.associate_required == "true"), 
+          }
         }
       }
 
       setTimeout(function(){
-        postService({data: service});
+        postService(service, usvc.is_store_number);
       }, index * 1000)
     })
   };
 
-  const postService = (svc) => {
-    console.log(svc)
+  const postService = (svc, isStoreNumber) => {
+    var bool = (isStoreNumber == "true")
+    const apiEndpoint = constructV3ApiEndpoint(data.company, data.environment, CREATE_STORE_SERVICE_ENDPOINT(svc.store_id))
+    let settings = {
+      method: 'post',
+      data: svc.data,
+      params: {
+        api_key: apiKey,
+        ...bool ? {store_number: true} : {},
+      }
+    }
+    return api.call(apiEndpoint, settings)
   }
 }
 

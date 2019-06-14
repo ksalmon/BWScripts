@@ -17,6 +17,7 @@ const nikeCreateLayouts = require('./scripts/nikeLayouts.js');
 // Store Services
 const getStoreServices = require('./scripts/store_services/get.js');
 const createStoreServices = require('./scripts/store_services/post.js')
+const updateStoreServices = require('./scripts/store_services/update.js')
 
 var startQuestions = [
   { 
@@ -126,7 +127,7 @@ const scriptChoice = (auth, data) => {
           } else if(answer.servicesPrompt == 'Create Store Services') {
               createStoreServices.init(data)
           } else if(answer.servicesPrompt == 'Update Store Services') {
-              ui.log.write('In Progress')
+              updateStoreServices.init(data)
           }
       })
   } else if(data.type == 'Layouts') {

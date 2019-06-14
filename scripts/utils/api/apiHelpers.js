@@ -17,7 +17,7 @@ const constructV3ApiEndpoint = (company, env, path, apiKey = null) => {
     if(env == 'production') {
         baseUrl += bwUrl
     } else {
-        baseUrl += '-' + env + bwUrl 
+        baseUrl += '-' + env.toLowerCase() + bwUrl 
     }
     baseUrl += path
     if (apiKey) {

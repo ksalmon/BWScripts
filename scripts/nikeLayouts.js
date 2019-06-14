@@ -1,4 +1,4 @@
-const { constructApiRoot, constructV4ApiEndpoint } = require('./utils/api/apiHelpers');
+const { constructApiRoot, constructV4ApiEndpoint } = require('./utils/api/apiHelpers.js');
 const { LAYOUTS_ENDPOINT } = require('./utils/api/endpoints');
 const api = require('./utils/api/callApi.js')
 

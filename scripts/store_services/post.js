@@ -1,4 +1,4 @@
-const { constructApiRoot, constructV3ApiEndpoint } = require('../utils/api/apiHelpers.js');
+const { constructV3ApiEndpoint } = require('../utils/api/apiHelpers.js');
 
 const { CREATE_STORE_SERVICE_ENDPOINT } = require('../utils/api/endpoints.js')
 const api = require('../utils/api/callApi.js')
@@ -8,8 +8,6 @@ const inq = require('inquirer');
 const { clientDirectory } = require('../utils/helpers/csvHelpers');
 const csv = require('csv-parser')
 const fs = require('fs')
-const mkdirp = require('mkdirp');
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
 
 
 var filenameQuestionPrompt = [
@@ -54,7 +52,7 @@ const init = (data) => {
     var bool 
     svc.forEach((usvc, index) => {
       let service = {
-        'store_id': Number(usvc.store_id),
+        'store_id': parseInt(usvc.store_id),
         'data': {
           'store_service': {
             'service_id': parseInt(usvc.service_id),

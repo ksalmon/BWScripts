@@ -14,7 +14,7 @@ var filenameQuestionPrompt = [
   { type: 'password', name: 'apiKey', message: 'Enter a valid API Key' },
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/store_services.csv"' }
 ];
-// Create Store Services from CSV
+// Update Store Services from CSV
 const init = (data) => {
   var directory,
       filename,

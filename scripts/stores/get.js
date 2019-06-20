@@ -31,7 +31,7 @@ const init = (data) => {
         getAllStores(apiKey, endpoint, [], resolve, reject)
       })
       .then(response => {
-        console.log(response)
+        formatStores(response)
       })
     })
     .catch(err => console.log(err))
@@ -59,7 +59,31 @@ const init = (data) => {
           reject('There was a problem')
         })
     }
-  }
+
+    const formatStores = (strs) => {
+      let stores = [];
+      strs.forEach(str => {
+        stores.push(str)
+      });
+
+      printToCSV(stores)
+    }
+
+    const printToCSV = (strs) => {
+      let keys = []
+      Object.keys(strs[0]).forEach(x => {
+        keys.push({id: x, title: x})
+      });
+  
+      const csvWriter = csv({
+        header: keys,
+        append: false,
+        path: directory
+      })
+      csvWriter.writeRecords(strs).then(() => console.log('Done'))
+    }
+}
+
 
 
 //   inq.prompt(questionPrompt)

@@ -28,11 +28,11 @@ const constructV3ApiEndpoint = (company, env, path, apiKey = null) => {
 
 const constructV4ApiEndpoint = (env, path) => {
     let baseUrl = '';
-    baseUrl += 'https://api.';
+    baseUrl += 'https://api';
     if (env == 'production') {
         baseUrl += bwUrl
     } else {
-        baseUrl += 'bw-' + env + '.com'
+        baseUrl += '.bw-' + env + '.com'
     }
     baseUrl += path
     return baseUrl

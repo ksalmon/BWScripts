@@ -12,7 +12,8 @@ const updateLocales = require('./scripts/locales/update.js')
 
 // Layout Scripts
 // const updateLiveLayout = require('./scripts/layouts/update.js/');
-const nikeCreateLayouts = require('./scripts/nikeLayouts.js');
+const nikeCreateLayouts = require('./scripts/layouts/nikeLayouts.js');
+const updateLiveLayout = require('./scripts/layouts/update.js')
 
 // Store Services
 const getStoreServices = require('./scripts/store_services/get.js');
@@ -32,9 +33,9 @@ var startQuestions = [
       name: 'environment', 
       message: 'Which environment?', 
       choices: [
-          'Staging',
-          'UAT',
-          'Production'
+          'staging',
+          'uat',
+          'production'
       ]
   },
   { 
@@ -89,9 +90,8 @@ var layoutsQuestions = [
       type: 'list',
       name: 'layoutPrompt',
       choices: [
-          'Get Live Layout',
-          'Create Live Layout',
-          'Update Live Layout'
+          'Update Live Layouts',
+          'Nike Layouts'
       ]
   }
 ]
@@ -133,12 +133,10 @@ const scriptChoice = (auth, data) => {
   } else if(data.type == 'Layouts') {
       inq.prompt(layoutsQuestions)
       .then(answer => {
-          if(answer.layoutsPrompt == 'Get Live Layouts') {
-              ui.log.write('In Progress')
-          } else if(answer.layoutsPrompt == 'Create Live Layouts') {
-              ui.log.write('In Progress')
-          } else if(answer.layoutsPrompt == 'Update Live Layouts') {
-              ui.log.write('In Progress')
+          if(answer.layoutPrompt == 'Update Live Layouts') {
+              updateLiveLayout.init(auth, data)
+          } else if(answer.layoutPrompt == 'Nike Layouts') {
+              nikeCreateLayouts.init(auth, data)
           }
       })
   }

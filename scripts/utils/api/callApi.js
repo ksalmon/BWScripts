@@ -8,9 +8,10 @@ const call = (endpoint, settings) => {
         return res.data;
     })
     .catch(function(err) {
-      if(err.response.status !== 200 || err.response.status !== 201) {
-        console.log('Error Code: ' + err.response.status + ' ' + err.response.statusText + '\n' + "Data: " + err.config.data + '\n' + 'Endpoint: ' + err.config.url)
-      }
+      console.log(err)
+      // if(err.response.status !== 200 || err.response.status !== 201) {
+      //   console.log('Error Code: ' + err.response.status + ' ' + err.response.statusText + '\n' + "Data: " + err.config.data + '\n' + 'Endpoint: ' + err.config.url)
+      // }
     })
 }
 

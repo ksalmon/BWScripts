@@ -42,7 +42,6 @@ const init = (auth, data) => {
 
   const parseCsvData = (lc) => {
     lc.forEach((ulc, index) => {
-      console.log(ulc)
       let locale = {
         "type": 'locale',
         "id": ulc.locale,

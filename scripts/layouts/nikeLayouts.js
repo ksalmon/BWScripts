@@ -1,10 +1,10 @@
-const { constructApiRoot, constructV4ApiEndpoint } = require('./utils/api/apiHelpers.js');
-const { LAYOUTS_ENDPOINT } = require('./utils/api/endpoints');
-const api = require('./utils/api/callApi.js')
+const { constructApiRoot, constructV4ApiEndpoint } = require('../utils/api/apiHelpers.js');
+const { LAYOUTS_ENDPOINT } = require('../utils/api/endpoints');
+const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('./utils/helpers/csvHelpers');
+const { clientDirectory } = require('../utils/helpers/csvHelpers.js');
 const csv = require('csv-parser')
 const fs = require('fs')
 
@@ -148,7 +148,7 @@ const init = (auth, data) => {
           {id: 'locale', title: 'Locale'},
           {id: 'layoutId', title: 'Layout ID'},
       ],
-      append: true,
+      append: false,
       path: clientDirectory('nike', data.environment, '/layoutIds.csv') 
     });
     csvWriter

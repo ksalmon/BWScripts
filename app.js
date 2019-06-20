@@ -1,6 +1,6 @@
 // Helpers
-const inq = require('inquirer');
-const ui = new inq.ui.BottomBar();
+const inq = require('inquirer')
+const ui = new inq.ui.BottomBar()
 
 // Scripts
 const getToken = require('./scripts/utils/auth/getToken.js')
@@ -15,9 +15,12 @@ const nikeCreateLayouts = require('./scripts/layouts/nikeLayouts.js');
 const updateLiveLayout = require('./scripts/layouts/update.js')
 
 // Store Services
-const getStoreServices = require('./scripts/store_services/get.js');
+const getStoreServices = require('./scripts/store_services/get.js')
 const createStoreServices = require('./scripts/store_services/post.js')
 const updateStoreServices = require('./scripts/store_services/update.js')
+
+// Stores
+const getStores = require('./scripts/stores/get.js')
 
 var startQuestions = [
   { type: 'input', name: 'company', message: 'Enter the company name', validate: (company) => { return company !== ''} },
@@ -33,6 +36,16 @@ var localeQuestions = [
 
 var servicesQuestions = [
   { type: 'list', name: 'servicesPrompt', choices: ['Get Store Services', 'Create Store Services', 'Update Store Services'] }
+]
+
+var storesQuestions = [
+  {
+      type: 'list',
+      name: 'storesPrompt',
+      choices: [
+          'Get Stores',
+      ]
+  }
 ]
 
 var layoutsQuestions = [
@@ -69,7 +82,7 @@ const scriptChoice = (auth, data) => {
               getStoreServices.init(data)
           } else if(answer.servicesPrompt == 'Create Store Services') {
               createStoreServices.init(data)
-          } else if(answer.servicesPrompt == 'Update Store Services') {
+          } else if(answer.storeServicesPrompt == 'Update Store Services') {
               updateStoreServices.init(data)
           }
       })
@@ -82,8 +95,14 @@ const scriptChoice = (auth, data) => {
               nikeCreateLayouts.init(auth, data)
           }
       })
-  }
-  else {
+  } else if(data.type == 'Stores') {
+    inq.prompt(storesQuestions)
+    .then(answer => {
+        if(answer.storesPrompt == 'Get Stores') {
+            getStores.init(data)
+        }
+    })
+  } else {
     ui.log.write('Unavailable Script')
   }
 }

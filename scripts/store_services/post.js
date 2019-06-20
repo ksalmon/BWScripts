@@ -16,9 +16,10 @@ var filenameQuestionPrompt = [
 ];
 // Create Store Services from CSV
 const init = (data) => {
-  var directory,
+  let directory,
       filename,
-      apiKey
+      apiKey,
+      bool
 
   var defaultfilename = '/store_services.csv';
 
@@ -49,7 +50,6 @@ const init = (data) => {
   };
 
   const parseCsvData = (svc) => {
-    var bool 
     svc.forEach((usvc, index) => {
       let service = {
         'store_id': parseInt(usvc.store_id),
@@ -69,7 +69,7 @@ const init = (data) => {
   };
 
   const postService = (svc, isStoreNumber) => {
-    var bool = (isStoreNumber == "true")
+    bool = (isStoreNumber == "true")
     const apiEndpoint = constructV3ApiEndpoint(data.company, data.environment, CREATE_STORE_SERVICE_ENDPOINT(svc.store_id))
     let settings = {
       method: 'post',

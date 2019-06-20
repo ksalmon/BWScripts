@@ -8,7 +8,7 @@ const constructApiRoot = (company, environment) => {
     if (env !== 'production' && env !== 'demo') {
         baseUrl += '-' + env
     }
-    baseUrl += bwUrl;
+    
     return baseUrl
 }
 
@@ -19,7 +19,7 @@ const constructV3ApiEndpoint = (company, environment, path, apiKey = null) => {
     if(env == 'production') {
         baseUrl += bwUrl
     } else {
-        baseUrl += '-' + env.toLowerCase() + bwUrl 
+        baseUrl += '-' + env + bwUrl 
     }
     baseUrl += path
     if (apiKey) {

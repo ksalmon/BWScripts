@@ -10,7 +10,7 @@ const csv = require('csv-parser')
 const fs = require('fs')
 
 
-var filenameQuestionPrompt = [
+const filenameQuestionPrompt = [
   { type: 'password', name: 'apiKey', message: 'Enter a valid API Key' },
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/store_services.csv"' }
 ];

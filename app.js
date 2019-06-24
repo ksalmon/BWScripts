@@ -11,7 +11,6 @@ const createLocales = require('./scripts/locales/post.js')
 const updateLocales = require('./scripts/locales/update.js')
 
 // Layout Scripts
-// const updateLiveLayout = require('./scripts/layouts/update.js/');
 const nikeCreateLayouts = require('./scripts/layouts/nikeLayouts.js');
 const updateLiveLayout = require('./scripts/layouts/update.js')
 
@@ -21,79 +20,23 @@ const createStoreServices = require('./scripts/store_services/post.js')
 const updateStoreServices = require('./scripts/store_services/update.js')
 
 var startQuestions = [
-  { 
-      type: 'input', 
-      name: 'company', 
-      message: 'Enter the company name', 
-      validate: (company) => {
-          return company !== '';
-      }},
-  { 
-      type: 'list', 
-      name: 'environment', 
-      message: 'Which environment?', 
-      choices: [
-          'staging',
-          'uat',
-          'production'
-      ]
-  },
-  { 
-      type: 'list', 
-      name: 'type', 
-      message: 'Please choose an option',
-      choices: [
-          'Locales',
-          'Services',
-          'Layouts',
-      ]
-  },
-  { 
-    type: 'input', 
-    name: 'username', 
-    message: 'Enter Username/Email' 
-  },
-  { 
-    type: 'password', 
-    mask: '*', 
-    name: 'password', 
-    message: 'Enter password' 
-  },
+  { type: 'input', name: 'company', message: 'Enter the company name', validate: (company) => { return company !== ''} },
+  { type: 'list', name: 'environment', message: 'Which environment?', choices: ['Staging', 'UAT', 'Production'] },
+  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts'] },
+  { type: 'input', name: 'username', message: 'Enter Username/Email' },
+  { type: 'password', mask: '*', name: 'password', message: 'Enter password' },
 ];
 
 var localeQuestions = [
-  {
-      type: 'list',
-      name: 'localePrompt',
-      choices: [
-          'Get Locales',
-          'Create Locales',
-          'Update Locales',
-      ]
-  }
+  { type: 'list', name: 'localePrompt', choices: ['Get Locales', 'Create Locales', 'Update Locales'] }
 ]
 
 var servicesQuestions = [
-  {
-      type: 'list',
-      name: 'servicesPrompt',
-      choices: [
-          'Get Store Services',
-          'Create Store Services',
-          'Update Store Services'
-      ]
-  }
+  { type: 'list', name: 'servicesPrompt', choices: ['Get Store Services', 'Create Store Services', 'Update Store Services'] }
 ]
 
 var layoutsQuestions = [
-  {
-      type: 'list',
-      name: 'layoutPrompt',
-      choices: [
-          'Update Live Layouts',
-          'Nike Layouts'
-      ]
-  }
+  { type: 'list', name: 'layoutsPrompt', choices: ['Update Live Layouts', 'Nike Layouts'] }
 ]
 
 const init = () => {
@@ -119,11 +62,11 @@ const scriptChoice = (auth, data) => {
               updateLocales.init(auth, data)
           }
       })
-  } else if(data.type == 'Services') {
+  } else if(data.type == 'Store Services') {
       inq.prompt(servicesQuestions)
       .then(answer => {
           if(answer.servicesPrompt == 'Get Store Services') {
-              getStoreServices.init(auth, data)
+              getStoreServices.init(data)
           } else if(answer.servicesPrompt == 'Create Store Services') {
               createStoreServices.init(data)
           } else if(answer.servicesPrompt == 'Update Store Services') {
@@ -133,9 +76,9 @@ const scriptChoice = (auth, data) => {
   } else if(data.type == 'Layouts') {
       inq.prompt(layoutsQuestions)
       .then(answer => {
-          if(answer.layoutPrompt == 'Update Live Layouts') {
+          if(answer.layoutsPrompt == 'Update Live Layouts') {
               updateLiveLayout.init(auth, data)
-          } else if(answer.layoutPrompt == 'Nike Layouts') {
+          } else if(answer.layoutsPrompt == 'Nike Layouts') {
               nikeCreateLayouts.init(auth, data)
           }
       })

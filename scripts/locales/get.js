@@ -1,12 +1,10 @@
-const { constructApiRoot, constructV4ApiEndpoint } = require('../utils/api/apiHelpers.js');
+const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers.js');
 const { LOCALE_ENDPOINT } = require('../utils/api/endpoints.js');
 const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
 const { clientDirectory } = require('../utils/helpers/csvHelpers.js');
-const csv = require('csv-parser')
-const fs = require('fs')
 const mkdirp = require('mkdirp');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
 

@@ -1,8 +1,9 @@
 // API Endpoints
 const bwUrl = '.brickworksoftware.com'
 
-const constructApiRoot = (company, env) => {
+const constructApiRoot = (company, environment) => {
     let baseUrl = '';
+    let env = environment.toLowerCase()
     baseUrl += company;
     if (env !== 'production' && env !== 'demo') {
         baseUrl += '-' + env
@@ -11,8 +12,9 @@ const constructApiRoot = (company, env) => {
     return baseUrl
 }
 
-const constructV3ApiEndpoint = (company, env, path, apiKey = null) => {
+const constructV3ApiEndpoint = (company, environment, path, apiKey = null) => {
     let baseUrl = '';
+    let env = environment.toLowerCase()
     baseUrl += 'https://' + company;
     if(env == 'production') {
         baseUrl += bwUrl
@@ -26,8 +28,9 @@ const constructV3ApiEndpoint = (company, env, path, apiKey = null) => {
     return baseUrl
 }
 
-const constructV4ApiEndpoint = (env, path) => {
+const constructV4ApiEndpoint = (environment, path) => {
     let baseUrl = '';
+    let env = environment.toLowerCase()
     baseUrl += 'https://api';
     if (env == 'production') {
         baseUrl += bwUrl

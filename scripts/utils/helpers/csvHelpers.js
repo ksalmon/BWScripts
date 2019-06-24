@@ -1,9 +1,13 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const dirname = require('path').dirname
+
 
 // Sets directory
 const clientDirectory = (company, env, filename = null) => {
-    let dir = 'data/' + company + '/' + env + '/';
+    let dir = 'data/' + company + '/' + env.toLowerCase() + '/';
+    let path = 'data/' + company + '/' + env.toLowerCase();
+    writeDirectory(path)
     if(filename) {
         dir += filename
     }
@@ -11,14 +15,14 @@ const clientDirectory = (company, env, filename = null) => {
 }
 
 // Checks if the directory exists
-const directoryCheck = (dir) => {
-    if(!fs.existsSync(dir)) {
-        mkdirp(dir)
+const writeDirectory = (path) => {
+    if(!fs.existsSync(path)) {
+        mkdirp(path)
         console.log('Directory successfully created')
     }
 }
 
 module.exports = {
     clientDirectory,
-    directoryCheck,
+    writeDirectory,
 }

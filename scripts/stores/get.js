@@ -84,61 +84,6 @@ const init = (data) => {
     }
 }
 
-
-
-//   inq.prompt(questionPrompt)
-//     .then(async (answers) => {
-//       filename = (answers.filename == '') ? defaultfilename : answers.filename
-//       directory = clientDirectory(data.company, data.environment, filename)
-//       apiKey = answers.apiKey
-//       const stores = await getStores(apiKey)
-//       return stores
-//     })
-//     .then(stores => {
-//       formatStores(stores)
-//     })
-//     .catch(err => console.log(err));
-
-//     const getStores = (apiKey, page) => {
-//       const apiEndpoint = constructV3ApiEndpoint(data.company, data.environment, GET_STORES_ENDPOINT)
-      
-//       let settings = {
-//         url: apiEndpoint,
-//         method: 'get',
-//         params: {
-//           api_key: apiKey,
-//           ...page > 1 ? {page: page} : {}
-//         }
-//       }
-//       return api.call(apiEndpoint, settings)
-
-//     }
-
-//     const formatStores = (strs) => {
-//       let stores = [];
-//       console.log(strs)
-//       strs.stores.forEach(str => {
-//         stores.push(str)
-//       });
-
-//       printToCSV(stores)
-//     }
-
-//     const printToCSV = (strs) => {
-//       let keys = []
-//       Object.keys(strs[0]).forEach(x => {
-//         keys.push({id: x, title: x})
-//       });
-  
-//       const csvWriter = csv({
-//         header: keys,
-//         append: false,
-//         path: directory
-//       })
-//       csvWriter.writeRecords(strs).then(() => console.log('Done'))
-//     }
-// }
-
 module.exports = {
   init,
 }

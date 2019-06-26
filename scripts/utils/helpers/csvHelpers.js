@@ -5,8 +5,8 @@ const dirname = require('path').dirname
 
 // Sets directory
 const clientDirectory = (company, env, filename = null) => {
-    let dir = 'data/' + company + '/' + env.toLowerCase() + '/';
-    let path = 'data/' + company + '/' + env.toLowerCase();
+    let dir = 'data/' + company.split(' ').join('_') + '/' + env.toLowerCase() + '/';
+    let path = 'data/' + company.split(' ').join('_') + '/' + env.toLowerCase();
     writeDirectory(path)
     if(filename) {
         dir += filename

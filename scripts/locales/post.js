@@ -1,10 +1,10 @@
-const { constructApiRoot, constructV4ApiEndpoint } = require('./utils/apiHelpers');
-const { LOCALE_ENDPOINT } = require('./utils/endpoints');
-const api = require('./utils/callApi.js')
+const { constructApiRoot, constructV4ApiEndpoint } = require('../utils/api/apiHelpers');
+const { LOCALE_ENDPOINT } = require('../utils/api/endpoints');
+const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('./utils/csvHelpers');
+const { clientDirectory } = require('../utils/helpers/csvHelpers');
 const csv = require('csv-parser')
 const fs = require('fs')
 
@@ -19,7 +19,7 @@ const init = (auth, data) => {
   inq.prompt(filenameQuestionPrompt)
     .then(answer => {
       filename = (answer.filename == '') ? defaultfilename : answer.filename;
-      directory = clientDirectory(data.company, data.enviroment, filename)
+      directory = clientDirectory(data.company, data.environment, filename)
       readCsvFile(directory)
     });
 
@@ -74,7 +74,7 @@ const init = (auth, data) => {
   };
 
   const postLocale = (lc) => {
-    const apiEndpoint = constructV4ApiEndpoint(data.enviroment, LOCALE_ENDPOINT);
+    const apiEndpoint = constructV4ApiEndpoint(data.environment, LOCALE_ENDPOINT);
     let settings = {
       url: apiEndpoint,
       method: 'post',

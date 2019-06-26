@@ -1,12 +1,10 @@
-const { constructApiRoot, constructV4ApiEndpoint } = require('./utils/apiHelpers');
-const { LOCALE_ENDPOINT } = require('./utils/endpoints');
-const api = require('./utils/callApi.js')
+const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers.js');
+const { LOCALE_ENDPOINT } = require('../utils/api/endpoints.js');
+const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('./utils/csvHelpers');
-const csv = require('csv-parser')
-const fs = require('fs')
+const { clientDirectory } = require('../utils/helpers/csvHelpers.js');
 const mkdirp = require('mkdirp');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
 
@@ -23,7 +21,7 @@ const init = (auth, data) => {
   inq.prompt(filenameQuestionPrompt)
     .then(async (answer) => {
       filename = (answer.filename == '') ? defaultfilename : answer.filename;
-      directory = clientDirectory(data.company, data.enviroment)
+      directory = clientDirectory(data.company, data.environment)
       const locales = await getLocales();
       return locales.data
     })
@@ -33,7 +31,7 @@ const init = (auth, data) => {
     .catch(e => console.log(e));
 
   const getLocales = () => {
-    const apiEndpoint = constructV4ApiEndpoint(data.enviroment, LOCALE_ENDPOINT );
+    const apiEndpoint = constructV4ApiEndpoint(data.environment, LOCALE_ENDPOINT );
 
     let settings = {
       url: apiEndpoint,

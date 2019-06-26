@@ -1,12 +1,10 @@
-const { constructApiRoot, constructV3ApiEndpoint } = require('../utils/apiHelpers');
-const { INDEX_STORE_SERVICE_ENDPOINT } = require('../utils/endpoints');
-const api = require('../utils/callApi.js')
+const { constructV3ApiEndpoint } = require('../utils/api/apiHelpers');
+const { INDEX_STORE_SERVICE_ENDPOINT } = require('../utils/api/endpoints');
+const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('../utils/csvHelpers');
-const csv = require('csv-parser')
-const fs = require('fs')
+const { clientDirectory } = require('../utils/helpers/csvHelpers');
 const mkdirp = require('mkdirp');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
 
@@ -15,7 +13,7 @@ var filenameQuestionPrompt = [
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/store_services.csv"' }
 ];
 
-const init = (auth, data) => {
+const init = (data) => {
   var directory,
       filename;
 
@@ -24,7 +22,7 @@ const init = (auth, data) => {
   inq.prompt(filenameQuestionPrompt)
     .then(async (answers) => {
       filename = (answers.filename == '') ? defaultfilename : answers.filename;
-      directory = clientDirectory(data.company, data.enviroment)
+      directory = clientDirectory(data.company, data.environment)
       const services = await getStoreServices(answers.apiKey);
       return services
     })
@@ -34,11 +32,14 @@ const init = (auth, data) => {
     .catch(e => console.log(e));
 
   const getStoreServices = (apiKey) => {
-    const apiEndpoint = constructV3ApiEndpoint(data.company, data.enviroment, INDEX_STORE_SERVICE_ENDPOINT, apiKey );
+    const apiEndpoint = constructV3ApiEndpoint(data.company, data.environment, INDEX_STORE_SERVICE_ENDPOINT);
 
     let settings = {
       url: apiEndpoint,
       method: 'get',
+      params: {
+        api_key: apiKey
+      }
     }
 
     return api.call(apiEndpoint, settings)

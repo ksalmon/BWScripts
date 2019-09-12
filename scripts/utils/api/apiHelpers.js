@@ -8,7 +8,7 @@ const constructApiRoot = (company, environment) => {
     if (env !== 'production' && env !== 'demo') {
         baseUrl += '-' + env
     }
-    
+    baseUrl += bwUrl
     return baseUrl
 }
 

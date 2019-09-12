@@ -25,7 +25,7 @@ const getStores = require('./scripts/stores/get.js')
 var startQuestions = [
   { type: 'input', name: 'company', message: 'Enter the company name', validate: (company) => { return company !== ''} },
   { type: 'list', name: 'environment', message: 'Which environment?', choices: ['Staging', 'UAT', 'Production'] },
-  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts'] },
+  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts', 'Stores'] },
   { type: 'input', name: 'username', message: 'Enter Username/Email' },
   { type: 'password', mask: '*', name: 'password', message: 'Enter password' },
 ];
@@ -39,17 +39,11 @@ var servicesQuestions = [
 ]
 
 var storesQuestions = [
-  {
-      type: 'list',
-      name: 'storesPrompt',
-      choices: [
-          'Get Stores',
-      ]
-  }
+  { type: 'list', name: 'storesPrompt', choices: [ 'Get Stores'] }
 ]
 
 var layoutsQuestions = [
-  { type: 'list', name: 'layoutsPrompt', choices: ['Update Live Layouts', 'Nike Layouts'] }
+  { type: 'list', name: 'layoutsPrompt', choices: ['Update Live Layouts', 'Create Nike Layouts'] }
 ]
 
 const init = () => {
@@ -91,7 +85,7 @@ const scriptChoice = (auth, data) => {
       .then(answer => {
           if(answer.layoutsPrompt == 'Update Live Layouts') {
               updateLiveLayout.init(auth, data)
-          } else if(answer.layoutsPrompt == 'Nike Layouts') {
+          } else if(answer.layoutsPrompt == 'Create Nike Layouts') {
               nikeCreateLayouts.init(auth, data)
           }
       })

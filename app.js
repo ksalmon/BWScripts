@@ -22,29 +22,39 @@ const updateStoreServices = require('./scripts/store_services/update.js')
 // Stores
 const getStores = require('./scripts/stores/get.js')
 
-var startQuestions = [
+// Translations
+const getTranslations = require('./scripts/translations/get.js')
+const createTranslations = require('./scripts/translations/post.js')
+
+let startQuestions = [
   { type: 'input', name: 'company', message: 'Enter the company name', validate: (company) => { return company !== ''} },
   { type: 'list', name: 'environment', message: 'Which environment?', choices: ['Staging', 'UAT', 'Production'] },
-  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts', 'Stores'] },
+  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts', 'Stores', 'Translations'] },
   { type: 'input', name: 'username', message: 'Enter Username/Email' },
   { type: 'password', mask: '*', name: 'password', message: 'Enter password' },
 ];
 
-var localeQuestions = [
+let localeQuestions = [
   { type: 'list', name: 'localePrompt', choices: ['Get Locales', 'Create Locales', 'Update Locales'] }
 ]
 
-var servicesQuestions = [
+let servicesQuestions = [
   { type: 'list', name: 'servicesPrompt', choices: ['Get Store Services', 'Create Store Services', 'Update Store Services'] }
 ]
 
-var storesQuestions = [
+let storesQuestions = [
   { type: 'list', name: 'storesPrompt', choices: [ 'Get Stores'] }
 ]
 
-var layoutsQuestions = [
+let layoutsQuestions = [
   { type: 'list', name: 'layoutsPrompt', choices: ['Update Live Layouts', 'Create Nike Layouts'] }
 ]
+
+let translationsQuestions = [
+  { type: 'list', name: 'translationsPrompt', choices: ['Get Translations', 'Create Translations'] }
+]
+
+
 
 const init = () => {
   ui.log.write('Just a few questions before we begin.');
@@ -95,6 +105,15 @@ const scriptChoice = (auth, data) => {
         if(answer.storesPrompt == 'Get Stores') {
             getStores.init(data)
         }
+    })
+  } else if(data.type == 'Translations') {
+    inq.prompt(translationsQuestions)
+    .then(answer => {
+      if(answer.translationsPrompt == 'Get Translations') {
+        getTranslations.init(auth, data)
+      } else if(answer.translationsPrompt == 'Create Translations') {
+        createTranslations.init(auth, data)
+      }
     })
   } else {
     ui.log.write('Unavailable Script')

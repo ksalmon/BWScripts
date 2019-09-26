@@ -26,10 +26,14 @@ const getStores = require('./scripts/stores/get.js')
 const getTranslations = require('./scripts/translations/get.js')
 const createTranslations = require('./scripts/translations/post.js')
 
+// Store Features
+const getStoreFeatures = require('./scripts/store_features/get.js')
+const createStoreFeatures = require('./scripts/store_features/post.js')
+
 let startQuestions = [
   { type: 'input', name: 'company', message: 'Enter the company name', validate: (company) => { return company !== ''} },
   { type: 'list', name: 'environment', message: 'Which environment?', choices: ['Staging', 'UAT', 'Production'] },
-  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts', 'Stores', 'Translations'] },
+  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts', 'Stores', 'Translations', 'Store Features'] },
   { type: 'input', name: 'username', message: 'Enter Username/Email' },
   { type: 'password', mask: '*', name: 'password', message: 'Enter password' },
 ];
@@ -52,6 +56,10 @@ let layoutsQuestions = [
 
 let translationsQuestions = [
   { type: 'list', name: 'translationsPrompt', choices: ['Get Translations', 'Create Translations'] }
+]
+
+let featuresQuestions = [
+  { type: 'list', name: 'featuresPrompt', choices: ['Get Store Features', 'Create Store Features'] }
 ]
 
 
@@ -113,6 +121,15 @@ const scriptChoice = (auth, data) => {
         getTranslations.init(auth, data)
       } else if(answer.translationsPrompt == 'Create Translations') {
         createTranslations.init(auth, data)
+      }
+    })
+  } else if(data.type = 'Store Features') {
+    inq.prompt(featuresQuestions)
+    .then(answer => {
+      if(answer.featuresPrompt == 'Get Store Features') {
+        getStoreFeatures.init(data)
+      } else if(answer.featuresPrompt = 'Create Store Features') {
+        createStoreFeatures.init(data)
       }
     })
   } else {

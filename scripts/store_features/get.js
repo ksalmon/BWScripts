@@ -1,52 +1,93 @@
-require('es6-promise').polyfill();
-require('isomorphic-fetch');
+const inq = require('inquirer')
+const csv = require('csv-writer').createObjectCsvWriter
 
+const { constructV3ApiEndpoint } = require('../utils/api/apiHelpers.js')
+const { GET_STORES_ENDPOINT } = require('../utils/api/endpoints.js')
+const api = require('../utils/api/callApi.js')
 
-fetch('//justice-uat.brickworksoftware.com/api/v3/stores')
-  .then(function(response) {
-    if (response.status >= 400) {
-      throw new Error("Bad response from server");
-    }
-    return response.json();
-  })
-  .then(function(data) {
-    collectData(data.stores);
-  });
+const { clientDirectory } = require('../utils/helpers/csvHelpers.js')
 
+const questionPrompt = [
+  { type: 'password', name: 'apiKey', message: 'Enter a valid API Key', validate: (apiKey) => {
+    return apiKey !== '';
+  }},
+  { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/store_features.csv"' }
+]
 
-function collectData(stores) {
-  let data = []
-  for(var i=0; i<stores.length; i++) {
-    let bwStore = stores[i]
+// Export Store Features to CSV
+const init = (data) => {
+  let directory,
+      filename,
+      apiKey
+  
+  const defaultfilename = 'store_features.csv'
+  inq.prompt(questionPrompt)
+    .then(async (answers) => {
+      filename = (answers.filename == '') ? defaultfilename : answers.filename
+      directory = clientDirectory(data.company, data.environment, filename)
+      const endpoint = constructV3ApiEndpoint(data.company, data.environment, GET_STORES_ENDPOINT)
+      apiKey = answers.apiKey
+      new Promise((resolve, reject) => {
+        getAllStores(apiKey, endpoint, [], resolve, reject)
+      })
+      .then(response => {
+        formatStores(response)
+      })
+    })
+    .catch(err => console.log(err))
 
-    if (bwStore.features.length >= 1) {
-      let store = {
-        number: bwStore.number,
-        feature_ids: bwStore.features.map(x => x.id)
+    const getAllStores = (apiKey, endpoint, stores, resolve, reject) => {
+      let settings = {
+        url: endpoint,
+        method: 'get',
+        params: {
+          api_key: apiKey,
+        }
       }
-      data.push(store)
+
+      api.call(endpoint, settings)
+        .then(res => {
+          let allStores = stores.concat(res.stores)
+          if (res.meta.links.next !== null) {
+            getAllStores(apiKey, res.meta.links.next, allStores, resolve, reject)
+          } else {
+            resolve(allStores)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          reject('There was a problem')
+        })
     }
-  } 
-  // printToCSV(data);
-  console.log(data);
+
+    const formatStores = (strs) => {
+      let stores = [];
+      strs.forEach(str => {
+        let store = {
+          'id':  str.id,
+          'store_number': str.number,
+          'feature_ids': str.feature_ids
+        }
+        stores.push(store)
+      });
+      printToCSV(stores)
+    }
+
+    const printToCSV = (strs) => {
+      let keys = []
+      Object.keys(strs[0]).forEach(x => {
+        keys.push({id: x, title: x})
+      });
+  
+      const csvWriter = csv({
+        header: keys,
+        append: false,
+        path: directory
+      })
+      csvWriter.writeRecords(strs).then(() => console.log('CSV Written'))
+    }
 }
 
-function printToCSV(data) {
-  mkdirp(dir, function(err) { 
-    if (err) console.error(err)
-  });
-
-  const csvWriter = createCsvWriter({
-    header: [
-        {id: 'number', title: 'Number'},
-        {id: 'feature_ids', title: 'Feature Ids'},
-    ],
-    append: false,
-    path: dir + '/features.csv'
-  });
-    
-  csvWriter.writeRecords(data)
-    .then(() => {
-      console.log('...Done');
-    });
+module.exports = {
+  init,
 }

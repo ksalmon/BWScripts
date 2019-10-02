@@ -15,7 +15,7 @@ var filenameQuestionPrompt = [
 const init = (auth, data) => {
   var directory,
       filename;
-  var defaultfilename = '/create-locales.csv'
+  var defaultfilename = 'create-locales.csv'
   inq.prompt(filenameQuestionPrompt)
     .then(answer => {
       filename = (answer.filename == '') ? defaultfilename : answer.filename;

@@ -5,10 +5,10 @@ const { constructV3ApiEndpoint } = require('../utils/api/apiHelpers.js')
 const { GET_STORES_ENDPOINT } = require('../utils/api/endpoints.js')
 const api = require('../utils/api/callApi.js')
 
-const { clientDirectory } = require('../utils/helpers/csvHelpers.js')
+const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers.js')
 
 const questionPrompt = [
-  { type: 'password', name: 'apiKey', message: 'Enter a valid API Key', validate: (apiKey) => {
+  { type: 'input', name: 'apiKey', message: 'Enter a valid API Key', validate: (apiKey) => {
     return apiKey !== '';
   }},
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/store_features.csv"' }
@@ -74,10 +74,7 @@ const init = (data) => {
     }
 
     const printToCSV = (strs) => {
-      let keys = []
-      Object.keys(strs[0]).forEach(x => {
-        keys.push({id: x, title: x})
-      });
+      let keys = createHeaders(strs)
   
       const csvWriter = csv({
         header: keys,

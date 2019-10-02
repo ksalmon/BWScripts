@@ -1,65 +1,95 @@
-require('es6-promise').polyfill();
-require('isomorphic-fetch');
-var mkdirp = require('mkdirp');
-var createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const inq = require('inquirer')
+const csv = require('csv-writer').createObjectCsvWriter
 
+const { constructV3ApiEndpoint } = require('../utils/api/apiHelpers.js')
+const { GET_USERS_ENDPOINT } = require('../utils/api/endpoints.js')
+const api = require('../utils/api/callApi.js')
 
-const dir = '../data/saksfifth/production'
-var totalUsers = []
-fetch('https://saks-admin.brickworksoftware.com/api/v3/admin/users?query[start_date]=2016-01-01&api_key=aMU__MUKTSzUisreTvdG')
-  .then(function(response) {
-    if (response.status >= 400) {
-      throw new Error("Bad response from server");
+const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers.js')
+
+const questionPrompt = [
+  { type: 'input', name: 'apiKey', message: 'Enter a valid API Key', validate: (apiKey) => {
+    return apiKey !== '';
+  }},
+  { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/users.csv"' }
+]
+
+// Get Stores from CSV
+const init = (data) => {
+  let directory,
+      filename,
+      apiKey
+  
+  const defaultfilename = 'users.csv'
+
+  inq.prompt(questionPrompt)
+    .then(async (answers) => {
+      filename = (answers.filename == '') ? defaultfilename : answers.filename
+      directory = clientDirectory(data.company, data.environment, filename)
+      const endpoint = constructV3ApiEndpoint(data.company, data.environment, GET_USERS_ENDPOINT)
+      apiKey = answers.apiKey
+      new Promise((resolve, reject) => {
+        getAllUsers(apiKey, endpoint, [], resolve, reject)
+      })
+      .then(response => {
+        formatUsers(response)
+      })
+    })
+    .catch(err => console.log(err))
+
+    const getAllUsers = (apiKey, endpoint, users, resolve, reject) => {
+      let settings = {
+        url: endpoint,
+        method: 'get',
+        params: {
+          api_key: apiKey,
+        }
+      }
+
+      api.call(endpoint, settings)
+        .then(res => {
+          let allUsers = users.concat(res.users)
+          if (res.meta.links.next !== null) {
+            getAllUsers(apiKey, res.meta.links.next, allUsers, resolve, reject)
+          } else {
+            resolve(allUsers)
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          reject('There was a problem')
+        })
     }
-    return response.json();
-  })
-  .then(function(data) {
-    totalUsers.push(data)
-    collectData(data.users);
-    if (data.meta.links.next !== null) {
 
+    const formatUsers = (usrs) => {
+      let users = [];
+      usrs.forEach(usr => {
+        let user = {
+          'id': usr.id,
+          'store_id': usr.store_id,
+          'first_name': usr.first_name,
+          'last_name': usr.last_name,
+          'role': usr.role,
+          'email': usr.email,
+        }
+        users.push(user)
+      });
+
+      printToCSV(users)
     }
-  });
 
+    const printToCSV = (data) => {
+      const keys = createHeaders(data)
 
-function collectData(users) {
-  let data = []
-  for(var i=0; i<users.length; i++) {
-    let bwUser = users[i]
-    let user = {
-      id: bwUser.id,
-      store_id: bwUser.store_id,
-      first_name: bwUser.first_name,
-      last_name: bwUser.last_name,
-      role: bwUser.role,
-      email: bwUser.email,
+      const csvWriter = csv({
+        header: keys,
+        append: false,
+        path: directory
+      })
+      csvWriter.writeRecords(data).then(() => console.log(filename + ' successfully written to ' + directory))
     }
-    data.push(user)
-
-  } 
-  printToCSV(data);
 }
 
-function printToCSV(data) {
-  mkdirp(dir, function(err) { 
-    if (err) console.error(err)
-  });
-
-  const csvWriter = createCsvWriter({
-    header: [
-        {id: 'id', title: 'id'},
-        {id: 'store_id', title: 'store_id'},
-        {id: 'first_name', title: 'first_name'},
-        {id: 'last_name', title: 'last_name'},
-        {id: 'role', title: 'role'},
-        {id: 'email', title: 'email'},
-    ],
-    append: false,
-    path: dir + '/users.csv'
-  });
-    
-  csvWriter.writeRecords(data)
-    .then(() => {
-      console.log('...Done');
-    });
+module.exports = {
+  init,
 }

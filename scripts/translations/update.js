@@ -8,14 +8,14 @@ const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers')
 const { clientDirectory } = require('../utils/helpers/csvHelpers.js')
 
 var filenameQuestionPrompt = [
-  { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/new_translations.csv"' }
+  { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/updated_translations.csv"' }
 ];
 
 const init = (auth, data) => {
   let directory,
       filename
   
-  let defaultfilename = '/new_translations.csv'
+  let defaultfilename = 'updated_translations.csv'
 
   inq.prompt(filenameQuestionPrompt)
     .then(async(answers) => {
@@ -45,13 +45,11 @@ const init = (auth, data) => {
     const parseCsvData = (trns) => {
       trns.forEach((trn, index) => {
         let translation = {
+          'id': trn.id,
           'data': {
             'type': 'translations',
             'attributes': {
-              'locale': trn.locale,
-              'key': trn.key,
               'value': trn.value,
-              'resourceUri': trn.resourceUri
             }
           }
         }
@@ -64,9 +62,9 @@ const init = (auth, data) => {
 
     const postTranslation = (trn) => {
       console.log(trn)
-      const apiEndpoint = constructV4ApiEndpoint(data.environment, TRANSLATIONS_ENDPOINT)
+      const apiEndpoint = constructV4ApiEndpoint(data.environment, TRANSLATIONS_ENDPOINT + trn.id)
       let settings = {
-        method: 'post',
+        method: 'patch',
         data: trn,
         headers: { 'Authorization': 'Bearer ' + auth.token, },
       }

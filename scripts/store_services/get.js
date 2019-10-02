@@ -4,7 +4,7 @@ const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('../utils/helpers/csvHelpers');
+const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers');
 const mkdirp = require('mkdirp');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
 
@@ -17,19 +17,19 @@ const init = (data) => {
   var directory,
       filename;
 
-  var defaultfilename = '/store_services.csv';
+  var defaultfilename = 'store_services.csv';
 
   inq.prompt(filenameQuestionPrompt)
     .then(async (answers) => {
       filename = (answers.filename == '') ? defaultfilename : answers.filename;
-      directory = clientDirectory(data.company, data.environment)
+      directory = clientDirectory(data.company, data.environment, filename)
       const services = await getStoreServices(answers.apiKey);
       return services
     })
     .then(services => {
       formatServices(services)
     })
-    .catch(e => console.log(e));
+    .catch(err => console.log(err));
 
   const getStoreServices = (apiKey) => {
     const apiEndpoint = constructV3ApiEndpoint(data.company, data.environment, INDEX_STORE_SERVICE_ENDPOINT);
@@ -45,31 +45,36 @@ const init = (data) => {
     return api.call(apiEndpoint, settings)
   }
 
-  const formatServices = (svc) => {
-    let services = [];
-    svc.store_services.forEach(slc => {
-      // let service = JSON.stringify(slc)
-      services.push(slc)
-    });
-    mkdirp(directory, function(err) { 
-      printToCSV(services);
-    });
+  const formatServices = (svcs) => {
+    let services = []
+    svcs.store_services.forEach(svc => {
+      let service = {
+        'id': svc.id,
+        'service_id': svc.service_id,
+        'appointments_enabled': svc.appointments_enabled,
+        'associate_required': svc.associate_required,
+        'private': svc.private,
+        'hidden_from_reporting': svc.hidden_from_reporting,
+        'book_with': svc.book_with,
+        'auto_confirm_appt_requests': svc.auto_confirm_appt_requests,
+        'required_lead_time': svc.required_lead_time
+      }
+      services.push(service)
+    })
+    printToCSV(services)
   }
 
   const printToCSV = (data) => {
-    let keys = []
-    // BUG: This does not find nested keys
-    Object.keys(data[0]).forEach(x => {
-      keys.push({id: x, title: x})
-    });
+    let keys = createHeaders(data)
+
     const csvWriter = createCsvWriter({
       header: keys,
       append: false,
-      path: directory + filename
+      path: directory
     });
     csvWriter
       .writeRecords(data)
-      .then(()=> console.log('The CSV file was written successfully'));
+      .then(()=> console.log(filename + ' successfully written to ' + directory));
   }
 };
 

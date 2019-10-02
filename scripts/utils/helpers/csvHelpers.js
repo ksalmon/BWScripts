@@ -1,6 +1,5 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
-const dirname = require('path').dirname
 
 
 // Sets directory
@@ -22,7 +21,17 @@ const writeDirectory = (path) => {
     }
 }
 
+const createHeaders = (data) => {
+    let keys = []
+    Object.keys(data[0]).forEach(x => {
+      keys.push({id: x, title: x})
+    });
+
+    return keys
+}
+
 module.exports = {
     clientDirectory,
     writeDirectory,
+    createHeaders
 }

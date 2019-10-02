@@ -4,7 +4,7 @@ const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory } = require('../utils/helpers/csvHelpers.js');
+const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers.js');
 const mkdirp = require('mkdirp');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
 
@@ -65,15 +65,9 @@ const init = (auth, data) => {
   }
 
   const printToCSV = (data) => {
+    const keys = createHeaders(data)
     const csvWriter = createCsvWriter({
-      header: [
-          {id: 'id', title: 'id'},
-          {id: 'supported', title: 'supported'},
-          {id: 'custom', title: 'custom'},
-          {id: 'reactMapping', title: 'reactMapping'},
-          {id: 'momentMapping', title: 'momentMapping'},
-          {id: 'legacyMapping', title: 'legacyMapping'},
-      ],
+      header: keys,
       append: false,
       path: directory + filename
     });

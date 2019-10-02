@@ -1,6 +1,7 @@
 // Helpers
 const inq = require('inquirer')
 const ui = new inq.ui.BottomBar()
+const questions = require('./scripts/utils/helpers/questions')
 
 // Scripts
 const getToken = require('./scripts/utils/auth/getToken.js')
@@ -11,8 +12,9 @@ const createLocales = require('./scripts/locales/post.js')
 const updateLocales = require('./scripts/locales/update.js')
 
 // Layout Scripts
-const nikeCreateLayouts = require('./scripts/layouts/nikeLayouts.js');
-const updateLiveLayout = require('./scripts/layouts/update.js')
+const nikeCreateLayouts = require('./scripts/layouts/nikeLayouts.js')
+const createLiveLayouts = require('./scripts/layouts/post.js')
+const updateLiveLayouts = require('./scripts/layouts/update.js')
 
 // Store Services
 const getStoreServices = require('./scripts/store_services/get.js')
@@ -22,6 +24,9 @@ const updateStoreServices = require('./scripts/store_services/update.js')
 // Stores
 const getStores = require('./scripts/stores/get.js')
 
+// Templates
+const getTemplates = require('./scripts/templates/get.js')
+
 // Translations
 const getTranslations = require('./scripts/translations/get.js')
 const createTranslations = require('./scripts/translations/post.js')
@@ -30,43 +35,15 @@ const createTranslations = require('./scripts/translations/post.js')
 const getStoreFeatures = require('./scripts/store_features/get.js')
 const createStoreFeatures = require('./scripts/store_features/post.js')
 
-let startQuestions = [
-  { type: 'input', name: 'company', message: 'Enter the company name', validate: (company) => { return company !== ''} },
-  { type: 'list', name: 'environment', message: 'Which environment?', choices: ['Staging', 'UAT', 'Production'] },
-  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales','Store Services','Layouts', 'Stores', 'Translations', 'Store Features'] },
-  { type: 'input', name: 'username', message: 'Enter Username/Email' },
-  { type: 'password', mask: '*', name: 'password', message: 'Enter password' },
-];
+// Hours 
+const getHours = require('./scripts/hours/get.js')
 
-let localeQuestions = [
-  { type: 'list', name: 'localePrompt', choices: ['Get Locales', 'Create Locales', 'Update Locales'] }
-]
-
-let servicesQuestions = [
-  { type: 'list', name: 'servicesPrompt', choices: ['Get Store Services', 'Create Store Services', 'Update Store Services'] }
-]
-
-let storesQuestions = [
-  { type: 'list', name: 'storesPrompt', choices: [ 'Get Stores'] }
-]
-
-let layoutsQuestions = [
-  { type: 'list', name: 'layoutsPrompt', choices: ['Update Live Layouts', 'Create Nike Layouts'] }
-]
-
-let translationsQuestions = [
-  { type: 'list', name: 'translationsPrompt', choices: ['Get Translations', 'Create Translations'] }
-]
-
-let featuresQuestions = [
-  { type: 'list', name: 'featuresPrompt', choices: ['Get Store Features', 'Create Store Features'] }
-]
-
-
+// Users 
+const getUsers = require('./scripts/users/get.js')
 
 const init = () => {
   ui.log.write('Just a few questions before we begin.');
-  inq.prompt(startQuestions)
+  inq.prompt(questions.startQuestions)
   .then(async(answers) => {
       const auth = await getToken.fetchToken(answers);
       scriptChoice(auth, answers)
@@ -77,7 +54,7 @@ const init = () => {
 const scriptChoice = (auth, data) => {
   ui.log.write('What are you trying to do?')
   if(data.type == 'Locales') {
-      inq.prompt(localeQuestions)
+      inq.prompt(questions.localeQuestions)
       .then(answer => {
           if(answer.localePrompt == 'Get Locales') {
               getLocales.init(auth, data);
@@ -88,7 +65,7 @@ const scriptChoice = (auth, data) => {
           }
       })
   } else if(data.type == 'Store Services') {
-      inq.prompt(servicesQuestions)
+      inq.prompt(questions.servicesQuestions)
       .then(answer => {
           if(answer.servicesPrompt == 'Get Store Services') {
               getStoreServices.init(data)
@@ -98,24 +75,40 @@ const scriptChoice = (auth, data) => {
               updateStoreServices.init(data)
           }
       })
+  } else if(data.type == 'Hours') {
+      inq.prompt(questions.hoursQuestions)
+      .then(answer => {
+        if(answer.hoursPrompt == 'Get Hours') {
+          getHours.init(auth, data)
+        }
+      })
+  } else if(data.type == 'Templates') {
+      inq.prompt(questions.templatesQuestions)
+      .then(answer => {
+        if (answer.templatesPrompt == 'Get Templates') {
+          getTemplates.init(auth, data)
+        } 
+      })
   } else if(data.type == 'Layouts') {
-      inq.prompt(layoutsQuestions)
+      inq.prompt(questions.layoutsQuestions)
       .then(answer => {
           if(answer.layoutsPrompt == 'Update Live Layouts') {
-              updateLiveLayout.init(auth, data)
+              updateLiveLayouts.init(auth, data)
+          } else if(answer.layoutsPrompt == 'Create Layouts') {
+              createLiveLayouts.init(auth, data)
           } else if(answer.layoutsPrompt == 'Create Nike Layouts') {
               nikeCreateLayouts.init(auth, data)
           }
       })
   } else if(data.type == 'Stores') {
-    inq.prompt(storesQuestions)
+    inq.prompt(questions.storesQuestions)
     .then(answer => {
         if(answer.storesPrompt == 'Get Stores') {
             getStores.init(data)
         }
     })
   } else if(data.type == 'Translations') {
-    inq.prompt(translationsQuestions)
+    inq.prompt(questions.translationsQuestions)
     .then(answer => {
       if(answer.translationsPrompt == 'Get Translations') {
         getTranslations.init(auth, data)
@@ -123,8 +116,15 @@ const scriptChoice = (auth, data) => {
         createTranslations.init(auth, data)
       }
     })
+  } else if (data.type == 'Users') {
+    inq.prompt(questions.usersQuestions)
+    .then(answer => {
+      if(answer.usersPrompt == 'Get Users') {
+        getUsers.init(data)
+      }
+    })
   } else if(data.type = 'Store Features') {
-    inq.prompt(featuresQuestions)
+    inq.prompt(questions.featuresQuestions)
     .then(answer => {
       if(answer.featuresPrompt == 'Get Store Features') {
         getStoreFeatures.init(data)

@@ -11,7 +11,7 @@ const fs = require('fs')
 
 
 const filenameQuestionPrompt = [
-  { type: 'password', name: 'apiKey', message: 'Enter a valid API Key' },
+  { type: 'input', name: 'apiKey', message: 'Enter a valid API Key' },
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/store_services.csv"' }
 ];
 // Update Store Services from CSV

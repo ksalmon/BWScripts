@@ -5,7 +5,7 @@ const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers')
 const { TRANSLATIONS_ENDPOINT } = require('../utils/api/endpoints')
 const api = require('../utils/api/callApi.js')
 
-const { clientDirectory } = require('../utils/helpers/csvHelpers.js')
+const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers.js')
 
 const questionPrompt = [
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/translations.csv"' }
@@ -26,7 +26,7 @@ const init = (auth, data) => {
     .then(translations => {
       formatTranslations(translations)
     })
-    .catch(e => console.log(e))
+    .catch(err => console.log(err))
 
     const getTranslations = (auth) => {
       const apiEndpoint = constructV4ApiEndpoint(data.environment, TRANSLATIONS_ENDPOINT)
@@ -42,12 +42,12 @@ const init = (auth, data) => {
       let translations = [];
       trns.data.forEach(trn => {
         let translation = {
-          type: trn.type,
-          id: trn.id,
-          locale: trn.attributes.locale,
-          key: trn.attributes.key,
-          value: trn.attributes.value,
-          resourceUri: trn.attributes.resourceUri
+          'type': trn.type,
+          'id': trn.id,
+          'locale': trn.attributes.locale,
+          'key': trn.attributes.key,
+          'value': trn.attributes.value,
+          'resourceUri': trn.attributes.resourceUri
         }
         translations.push(translation)
       })
@@ -55,16 +55,10 @@ const init = (auth, data) => {
     }
 
     const printToCSV = (data) => {
-      console.log(data)
+      let keys = createHeaders(data)
+
       const csvWriter = csv({
-        header: [
-          {id: 'type', title: 'type'},
-          {id: 'id', title: 'id'},
-          {id: 'locale', title: 'attributesLocale'},
-          {id: 'key', title: 'attributesKey'},
-          {id: 'value', title: 'attributesValue'},
-          {id: 'resourceUri', title: 'attributesResourceUri'}
-        ],
+        header: keys,
         append: false,
         path: directory
       })

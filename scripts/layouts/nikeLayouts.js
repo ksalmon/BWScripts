@@ -133,8 +133,8 @@ const init = (auth, data) => {
     api.call(apiEndpoint, settings)
       .then(response => {
         let layout = {
-          locale: locale.bwLocale,
-          layoutId: response.data.id
+          'locale': locale.bwLocale,
+          'layoutId': response.data.id
         }
         mkdirp(clientDirectory('nike', data.environment), function(err) { 
           printToCSV(layout)
@@ -148,7 +148,7 @@ const init = (auth, data) => {
           {id: 'locale', title: 'Locale'},
           {id: 'layoutId', title: 'Layout ID'},
       ],
-      append: false,
+      append: true,
       path: clientDirectory('nike', data.environment, '/layoutIds.csv') 
     });
     csvWriter

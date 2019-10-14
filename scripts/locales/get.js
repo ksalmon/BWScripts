@@ -1,83 +1,74 @@
-const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers.js');
-const { LOCALE_ENDPOINT } = require('../utils/api/endpoints.js');
-const api = require('../utils/api/callApi.js')
+const inq = require('inquirer')
+const api = require('../utils/api/callApi')
 
-const inq = require('inquirer');
+const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers')
+const { LOCALE_ENDPOINT } = require('../utils/api/endpoints')
+const { clientDirectory, csvWriter } = require('../utils/helpers/csvHelpers')
 
-const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers.js');
-const mkdirp = require('mkdirp');
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
-
-var filenameQuestionPrompt = [
+let filenameQuestionPrompt = [
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/locales.csv"' }
 ];
 
-const init = (auth, data) => {
-  var directory,
-      filename;
+const init = (auth ,data) => {
+  let directory,
+      filename,
+      endpoint
 
-  var defaultfilename = '/locales.csv';
+  const defaultfilename = 'locales.csv'
 
   inq.prompt(filenameQuestionPrompt)
-    .then(async (answer) => {
-      filename = (answer.filename == '') ? defaultfilename : answer.filename;
-      directory = clientDirectory(data.company, data.environment)
-      const locales = await getLocales();
-      return locales.data
+    .then(async (answers) => {
+      filename = (answers.filename == '') ? defaultfilename : answers.filename;
+      directory = clientDirectory(data.company, data.environment, filename)
+      endpoint = constructV4ApiEndpoint(data.environment, LOCALE_ENDPOINT)
+      new Promise((resolve, reject) => {
+        getAllLocales(endpoint, [], resolve, reject)
+      })
+      .then(response => {
+        formatLocales(response)
+      })
+      .catch(err => console.log(err))
     })
-    .then(locales => {
-      formatLocales(locales)
-    })
-    .catch(e => console.log(e));
+    .catch(err => console.log(err))
 
-  const getLocales = () => {
-    const apiEndpoint = constructV4ApiEndpoint(data.environment, LOCALE_ENDPOINT );
+    const getAllLocales = (endpoint, locales, resolve, reject) => {
+      let settings = {
+        url: endpoint,
+        method: 'get',
+        headers: { 'Authorization' : 'Bearer ' + auth.token }
+      }
 
-    let settings = {
-      url: apiEndpoint,
-      method: 'get',
-      headers: { 'Authorization': 'Bearer ' + auth.token, },
-      params: {
-        perPage: "100",
-      },
+      api.call(endpoint, settings)
+        .then(res => {
+          let allLocales = locales.concat(res.data)
+          if (res.links.next) {
+            getAllLocales(res.links.next, allLocales, resolve, reject)
+          } else {
+            resolve(allLocales)
+          }
+        })
+        .catch(err => {
+          reject(err)
+        })
     }
 
-    return api.call(apiEndpoint, settings)
-  }
-
-  const formatLocales = (lc) => {
-    let locales = [];
-  
-    lc.forEach(slc => {
-      let locale = {
-        id: slc.id,
-        supported: slc.attributes.supported,
-        custom: slc.attributes.custom,
-        reactMapping: slc.attributes.reactMapping,
-        momentMapping: slc.attributes.momentMapping,
-        legacyMapping: slc.attributes.legacyMapping,
-      }
-      locales.push(locale)
-    });
-    mkdirp(directory, function(err) { 
-      printToCSV(locales);
-    });
-  }
-
-  const printToCSV = (data) => {
-    const keys = createHeaders(data)
-    const csvWriter = createCsvWriter({
-      header: keys,
-      append: false,
-      path: directory + filename
-    });
-    csvWriter
-      .writeRecords(data)
-      .then(()=> console.log('The CSV file was written successfully'));
-  }
-};
-
+    const formatLocales = (lcls) => {
+      let locales = []
+      lcls.forEach(lcl => {
+        let locale = {
+          'id': lcl.id,
+          'supported': lcl.attributes.supported,
+          'custom': lcl.attributes.custom,
+          'reactMapping': lcl.attributes.reactMapping,
+          'momentMapping': lcl.attributes.momentMapping,
+          'legacyMapping': lcl.attributes.legacyMapping
+        }
+        locales.push(locale)
+      })
+      csvWriter(locales, false, filename, directory)
+    }
+}
 
 module.exports = {
   init,
-};
+}

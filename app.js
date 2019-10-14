@@ -6,6 +6,10 @@ const questions = require('./scripts/utils/helpers/questions')
 // Scripts
 const getToken = require('./scripts/utils/auth/getToken.js')
 
+// Organizations Scripts
+const getOrganizations = require('./scripts/organizations/get.js')
+const updateOrganizations = require('./scripts/organizations/update.js')
+
 // Locale Scripts
 const getLocales = require('./scripts/locales/get.js')
 const createLocales = require('./scripts/locales/post.js')
@@ -14,6 +18,7 @@ const updateLocales = require('./scripts/locales/update.js')
 // Layout Scripts
 const nikeCreateLayouts = require('./scripts/layouts/nikeLayouts.js')
 const createLiveLayouts = require('./scripts/layouts/post.js')
+const getLiveLayouts = require('./scripts/layouts/get.js')
 const updateLiveLayouts = require('./scripts/layouts/update.js')
 
 // Store Services
@@ -41,6 +46,7 @@ const getHours = require('./scripts/hours/get.js')
 // Users 
 const getUsers = require('./scripts/users/get.js')
 
+
 const init = () => {
   ui.log.write('Just a few questions before we begin.');
   inq.prompt(questions.startQuestions)
@@ -64,6 +70,15 @@ const scriptChoice = (auth, data) => {
               updateLocales.init(auth, data)
           }
       })
+  // } else if(data.type = 'Organizations') {
+  //   inq.prompt(questions.organizationsQuestions)
+  //     .then(answer => {
+  //       if(answer.organizationsPrompt == 'Get Organizations') {
+  //         getOrganizations.init(auth, data)
+  //       } else if(answer.organizationsPrompt == 'Update Organizations') {
+  //         updateOrganizations.init(auth, data)
+  //       }
+  //     })
   } else if(data.type == 'Store Services') {
       inq.prompt(questions.servicesQuestions)
       .then(answer => {
@@ -96,6 +111,8 @@ const scriptChoice = (auth, data) => {
               updateLiveLayouts.init(auth, data)
           } else if(answer.layoutsPrompt == 'Create Layouts') {
               createLiveLayouts.init(auth, data)
+          } else if(answer.layoutsPrompt == 'Get Layouts') {
+              getLiveLayouts.init(auth, data)
           } else if(answer.layoutsPrompt == 'Create Nike Layouts') {
               nikeCreateLayouts.init(auth, data)
           }

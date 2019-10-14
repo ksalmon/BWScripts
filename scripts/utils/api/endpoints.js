@@ -5,6 +5,10 @@ const LAYOUTS_ENDPOINT = '/v4/layouts'
 const TRANSLATIONS_ENDPOINT = '/v4/translations'
 const TEMPLATES_ENDPOINT = '/v4/notifications/templates'
 const HOURS_ENDPOINT = '/v4/hours'
+const ORGANIZATIONS_ENDPOINT = (orgId) => {
+  const endpoint = '/v4/organizations' + orgId 
+  return endpoint
+}
 
 // V3 Endpoints
 const INDEX_STORE_SERVICE_ENDPOINT = '/api/v3/admin/store_services'
@@ -29,6 +33,7 @@ module.exports = {
   TRANSLATIONS_ENDPOINT,
   TEMPLATES_ENDPOINT,
   HOURS_ENDPOINT,
+  ORGANIZATIONS_ENDPOINT,
   GET_STORES_ENDPOINT,
   GET_USERS_ENDPOINT,
   INDEX_STORE_SERVICE_ENDPOINT,

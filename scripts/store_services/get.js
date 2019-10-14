@@ -4,9 +4,7 @@ const api = require('../utils/api/callApi.js')
 
 const inq = require('inquirer');
 
-const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers');
-const mkdirp = require('mkdirp');
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;  
+const { clientDirectory, csvWriter } = require('../utils/helpers/csvHelpers');
 
 var filenameQuestionPrompt = [
   { type: 'input', name: 'apiKey', message: 'Enter a valid API key' },
@@ -61,20 +59,7 @@ const init = (data) => {
       }
       services.push(service)
     })
-    printToCSV(services)
-  }
-
-  const printToCSV = (data) => {
-    let keys = createHeaders(data)
-
-    const csvWriter = createCsvWriter({
-      header: keys,
-      append: false,
-      path: directory
-    });
-    csvWriter
-      .writeRecords(data)
-      .then(()=> console.log(filename + ' successfully written to ' + directory));
+    csvWriter(services, false, filename, directory)
   }
 };
 

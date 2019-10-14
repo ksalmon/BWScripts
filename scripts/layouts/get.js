@@ -2,75 +2,69 @@ const inq = require('inquirer')
 const csv = require('csv-writer').createObjectCsvWriter
 
 const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers')
-const { HOURS_ENDPOINT } = require('../utils/api/endpoints')
+const { LAYOUTS_ENDPOINT } = require('../utils/api/endpoints')
 const api = require('../utils/api/callApi.js')
 
 const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers.js')
 
 const questionPrompt = [
-  { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/hours.csv"' }
+  { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/layouts.csv"' }
 ]
 
 const init = (auth, data) => {
   let directory,
-      filename
-  
-  const defaultfilename = 'hours.csv'
+      filename,
+      endpoint
+
+  const defaultfilename = 'layouts.csv'
   inq.prompt(questionPrompt)
     .then(async (answers) => {
       filename = (answers.filename == '') ? defaultfilename : answers.filename
       directory = clientDirectory(data.company, data.environment, filename)
-      const endpoint = constructV4ApiEndpoint(data.environment, HOURS_ENDPOINT)
+      endpoint = constructV4ApiEndpoint(data.environment, LAYOUTS_ENDPOINT)
       new Promise((resolve, reject) => {
-        getHours(auth, endpoint, [], resolve, reject)
+        getAllLayouts(endpoint, [], resolve, reject)
       })
-      .then(hours => {
-        formatHours(hours)
+      .then(response => {
+        formatLayouts(response)
       })
+      .catch(err => console.log(err))
     })
     .catch(err => console.log(err))
 
-    const getHours = (auth, endpoint, hours, resolve, reject) => {
-
+    const getAllLayouts = (endpoint, layouts, resolve, reject) => {
       let settings = {
         url: endpoint,
         method: 'get',
         headers: { 'Authorization' : 'Bearer ' + auth.token }
       }
-
-       api.call(endpoint, settings)
+      
+      api.call(endpoint, settings)
         .then(res => {
-          let allHours = hours.concat(res.data)
+          let allLayouts = layouts.concat(res.data)
           if (res.links.next) {
-            setTimeout(() => {
-              getHours(auth, res.links.next, allHours, resolve, reject)
-              console.log(res.links.next)
-            }, 1000)
+            getAllLayouts(res.links.next, allLayouts, resolve, reject)
           } else {
-            resolve(allHours)
+            resolve(allLayouts)
           }
         })
         .catch(err => {
-          console.log(err)
           reject(err)
         })
     }
 
-    const formatHours = (hrs) => {
-      let hours = []
-      hrs.forEach(hr => {
-        let hour = {
-          'id': hr.id,
-          'dayOfWeek': hr.attributes.dayOfWeek,
-          'startTime': hr.attributes.startTime,
-          'endTime': hr.attributes.endTime,
-          'timeZone': hr.attributes.timeZone,
-          'available': hr.attributes.available,
-          'resourceUri': hr.attributes.resourceUri
+    const formatLayouts = (trns) => {
+      let layouts = [];
+      trns.forEach(trn => {
+        let layout = {
+          'id': trn.id,
+          'comment': trn.attributes.comment,
+          'html': trn.attributes.headHtml + trn.attributes.headerHtml + trn.attributes.footerHtml,
+          'locale': trn.relationships.locale.data.id
         }
-        hours.push(hour)
+        layouts.push(layout)
       })
-      printToCSV(hours)
+      printToCSV(layouts)
     }
 
     const printToCSV = (data) => {

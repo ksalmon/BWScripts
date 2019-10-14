@@ -1,10 +1,14 @@
 const startQuestions = [
   { type: 'input', name: 'company', message: 'Enter the company name', validate: (company) => { return company !== ''} },
   { type: 'list', name: 'environment', message: 'Which environment?', choices: ['Staging', 'UAT', 'Production'] },
-  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Locales', 'Users', 'Store Services', 'Templates', 'Layouts', 'Stores', 'Translations', 'Store Features', 'Hours'] },
+  { type: 'list', name: 'type', message: 'Please choose an option', choices: ['Organizations', 'Locales', 'Users', 'Store Services', 'Templates', 'Layouts', 'Stores', 'Translations', 'Store Features', 'Hours'] },
   { type: 'input', name: 'username', message: 'Enter Username/Email' },
   { type: 'password', mask: '*', name: 'password', message: 'Enter password' },
 ];
+
+const organizationsQuestions = [
+  { type: 'list', name: 'organizationsPrompt', choices: ['Get Organizations', 'Update Organizations'] }
+]
 
 const localeQuestions = [
   { type: 'list', name: 'localePrompt', choices: ['Get Locales', 'Create Locales', 'Update Locales'] }
@@ -19,7 +23,7 @@ const storesQuestions = [
 ]
 
 const layoutsQuestions = [
-  { type: 'list', name: 'layoutsPrompt', choices: ['Create Layouts', 'Update Live Layouts', 'Create Nike Layouts'] }
+  { type: 'list', name: 'layoutsPrompt', choices: ['Create Layouts', 'Update Live Layouts', 'Get Layouts', 'Create Nike Layouts'] }
 ]
 
 const translationsQuestions = [
@@ -44,6 +48,7 @@ const usersQuestions = [
 
 module.exports = {
   startQuestions,
+  organizationsQuestions,
   localeQuestions,
   servicesQuestions,
   storesQuestions,

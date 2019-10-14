@@ -1,5 +1,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const write = require('csv-writer').createObjectCsvWriter
+const parse = require('csv-parser')
 
 
 // Sets directory
@@ -30,8 +32,39 @@ const createHeaders = (data) => {
     return keys
 }
 
+const readCsv = (dir) => {
+    let data = []
+    fs.createReadStream(dir)
+    .pipe(parse())
+    .on('data', (row) => {
+        try {
+            data.push(row)
+        }
+        catch(err) {
+            console.log(err)
+        }
+    })
+    .on('end', () => {
+        return data
+    })
+}
+
+const csvWriter = (data, append, filename, directory) => {
+    let keys = createHeaders(data)
+
+    const writer = write({
+        header: keys,
+        append: append,
+        path: directory
+    })
+
+    writer.writeRecords(data).then(() => console.log(filename + ' successfuly written to ' + directory))
+}
+
 module.exports = {
     clientDirectory,
     writeDirectory,
-    createHeaders
+    createHeaders,
+    readCsv,
+    csvWriter
 }

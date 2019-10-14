@@ -55,8 +55,7 @@ const init = (data) => {
           }
         })
         .catch(err => {
-          console.log(err)
-          reject('There was a problem')
+          reject(err)
         })
     }
 

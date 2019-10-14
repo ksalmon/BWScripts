@@ -6,7 +6,7 @@ const writeCsv = require('csv-writer').createObjectCsvWriter;
 
 const { constructV4ApiEndpoint } = require('../utils/api/apiHelpers')
 const { LAYOUTS_ENDPOINT } = require('../utils/api/endpoints')
-const { clientDirectory } = require('../utils/helpers/csvHelpers')
+const { clientDirectory, csvWriter } = require('../utils/helpers/csvHelpers')
 
 const filenameQuestionPrompt = [
   { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/new_layouts.csv"' }
@@ -82,11 +82,11 @@ const init = (auth, data) => {
 
         api.call(apiEndpoint, settings)
           .then(response => {
-            let locale = {
-              'locale': layout.locale,
+            let locale = [{
+              'locale': layout.localeId,
               'layoutId': response.data.id
-            }
-            printToCsv(locale)
+            }]
+            csvWriter(locale, false, 'layoutIds.csv', clientDirectory(data.company, data.environment, 'layoutIds.csv'))
           })
           .catch(err => {
             console.log(err)

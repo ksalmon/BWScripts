@@ -13,34 +13,49 @@ const questionPrompt = [
 
 const init = (auth, data) => {
   let directory,
-      filename
+      filename,
+      endpoint
 
   const defaultfilename = 'translations.csv'
   inq.prompt(questionPrompt)
     .then(async (answers) => {
       filename = (answers.filename == '') ? defaultfilename : answers.filename
       directory = clientDirectory(data.company, data.environment, filename)
-      const translations =  await getTranslations(auth)
-      return translations
-    })
-    .then(translations => {
-      formatTranslations(translations)
+      endpoint = constructV4ApiEndpoint(data.environment, TRANSLATIONS_ENDPOINT)
+      new Promise((resolve, reject) => {
+        getAllTranslations(endpoint, [], resolve, reject)
+      })
+      .then(response => {
+        formatTranslations(response)
+      })
+      .catch(err => console.log(err))
     })
     .catch(err => console.log(err))
 
-    const getTranslations = (auth) => {
-      const apiEndpoint = constructV4ApiEndpoint(data.environment, TRANSLATIONS_ENDPOINT)
+    const getAllTranslations = (endpoint, translations, resolve, reject) => {
       let settings = {
-        url: apiEndpoint,
+        url: endpoint,
         method: 'get',
         headers: { 'Authorization' : 'Bearer ' + auth.token }
       }
-      return api.call(apiEndpoint, settings)
+      
+      api.call(endpoint, settings)
+        .then(res => {
+          let allTranslations = translations.concat(res.data)
+          if (res.links.next) {
+            getAllTranslations(res.links.next, allTranslations, resolve, reject)
+          } else {
+            resolve(allTranslations)
+          }
+        })
+        .catch(err => {
+          reject(err)
+        })
     }
 
     const formatTranslations = (trns) => {
       let translations = [];
-      trns.data.forEach(trn => {
+      trns.forEach(trn => {
         let translation = {
           'type': trn.type,
           'id': trn.id,

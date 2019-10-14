@@ -63,7 +63,6 @@ const init = (auth, data) => {
     }
 
     const postTranslation = (trn) => {
-      console.log(trn)
       const apiEndpoint = constructV4ApiEndpoint(data.environment, TRANSLATIONS_ENDPOINT)
       let settings = {
         method: 'post',

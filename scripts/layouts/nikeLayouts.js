@@ -83,6 +83,7 @@ const init = (auth, data) => {
       <link rel="stylesheet" href="//assets.commerce.nikecloud.com/ncss/glyphs/2.1/css/glyphs.min.css">
       <link rel="stylesheet" href="//assets.commerce.nikecloud.com/ncss/1.0/dotcom/desktop/css/ncss.en-us.min.css">
       <link rel="stylesheet" href="https://s3.nikecdn.com/unite/app/561/styles/uniteTheme/import.css" type="text/css" charset="utf-8">
+      <link rel="stylesheet" type="text/css" href="https://s3.amazonaws.com/assets.brickworksoftware.com/Nike/nikeTempModal.css" >
       <style>
       #brickworkApp { margin-top: 100px; }
       @media (max-width: 768px) {
@@ -91,10 +92,37 @@ const init = (auth, data) => {
       .l-header{ z-index: 100 !important; }
       </style>
       <script>
-      function fireNike() {
-        NikeDotcomNav.mount()
-      }
-      window.onload = fireNike;  
+        function launchTempModal() {
+          const nikeModal = document.createElement('div')
+          nikeModal.setAttribute('id', 'nikeModal')
+          nikeModal.setAttribute('class', 'modal')
+          nikeModal.innerHTML = "<span id='close'>&times;</span> <img class='modal-content' id='img01' src='https://s3.amazonaws.com/assets.brickworksoftware.com/Nike/image001+(7).png'>"
+          nikeModal.style.zIndex = "999"
+          const tempBanner = document.createElement('div')
+          tempBanner.innerHTML = "<div id='tempBanner'>Temporary store closure in select countries starting March 15th - March 27th learn more <span id='action-item' style='text-decoration:underline;cursor:pointer;'>here</span></div>"
+          tempBanner.style.display = "flex"
+          tempBanner.style.position = "relative"
+          tempBanner.style.left = "-8px"
+          tempBanner.style.justifyContent = "center"
+          tempBanner.style.alignItems = "center"
+          tempBanner.style.width = "100vw"
+          tempBanner.style.minHeight = "50px"
+          tempBanner.style.height = "auto"
+          tempBanner.style.padding= "10px"
+          tempBanner.style.textAlign = "center"
+          tempBanner.style.backgroundColor = "#eee"
+          tempBanner.style.fontWeight = "500"
+          const nikeHeader = document.querySelectorAll('nav.ncss-container')[0]
+          nikeHeader.append(tempBanner, nikeModal)
+          const closeButton = document.getElementById('close')
+          const actionItem = document.getElementById('action-item')
+          closeButton.addEventListener('click', () => {nikeModal.style.display = "none"})
+          actionItem.addEventListener('click', () => {nikeModal.style.display = "block"})
+        }
+        function fireNike() {
+          NikeDotcomNav.mount()
+        }
+        window.onload = (fireNike, launchTempModal);
       </script>`
     const header = response.shared.html + response.header.html;
     const footer = response.footer.html;

@@ -103,8 +103,8 @@ function weekdaysBrickwork(index, store) {
 
 // Public Functions
 function formatTime(time) {
-  let unfomattedTime = time.replace(/ /g,'')
-  let formattedTime = moment(unfomattedTime, "h:mm A").format("h:mmA")
+  let unformattedTime = time.replace(/ /g,'')
+  let formattedTime = moment(unformattedTime, "h:mm A").format("h:mmA")
   return formattedTime;
 }
 

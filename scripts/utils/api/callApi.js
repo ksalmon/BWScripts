@@ -12,8 +12,9 @@ const call = (endpoint, settings) => {
             console.log('Error Code: ' + err.response.status + ' ' + err.response.statusText + '\n' + 
                       "Data: " + err.config.data + '\n' + 
                       'Endpoint: ' + err.config.url)
+        } else {
+            console.log(err)
         }
-        console.log(err)
     })
 }
 

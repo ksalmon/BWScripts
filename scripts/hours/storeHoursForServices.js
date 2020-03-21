@@ -1,9 +1,9 @@
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
 
-var mkdirp = require('mkdirp');
-var createCsvWriter = require('csv-writer').createObjectCsvWriter;
 var moment = require('moment');
+
+const { clientDirectory, csvWriter } = require('../utils/helpers/csvHelpers.js')
 
 var args = process.argv.slice(2)
 
@@ -14,7 +14,7 @@ if (args.length < 2) {
 
 const company = args[0];
 const envo =  args[1];
-const dir = '../data/' + company + '/' + envo
+const dir = clientDirectory(company, envo, 'service-hours.csv')
 
 const fetchUrl = constructFetchUrl(args);
 
@@ -40,6 +40,7 @@ fetch(fetchUrl)
     return response.json();
   })
   .then(function(data) {
+    console.log(data)
     collectData(data.stores);
   });
 
@@ -62,21 +63,21 @@ function collectData(stores) {
       }
     }
   } 
-  printToCSV(data);
+  csvWriter(data, false, 'service-hours.csv', dir)
 }
 
 
 function formatStartRange(time) {
   if (time === null){ return; }
-  let unfomattedTime = time.replace(/ /g,'')
-  let formattedTime = moment(unfomattedTime, "h:mm A").add(startRangeOffset, 'hours').format("HH:mm:ss")
+  let unformattedTime = time.replace(/ /g,'')
+  let formattedTime = moment(unformattedTime, "h:mm A").add(startRangeOffset, 'hours').format("HH:mm:ss")
   return formattedTime;
 }
 
 function formatEndTime(time) {
   if (time === null){ return; }
-  let unfomattedTime = time.replace(/ /g,'')
-  let formattedTime = moment(unfomattedTime, "h:mm A").add(endRangeOffset, 'hours').format("HH:mm:ss")
+  let unformattedTime = time.replace(/ /g,'')
+  let formattedTime = moment(unformattedTime, "h:mm A").add(endRangeOffset, 'hours').format("HH:mm:ss")
   return formattedTime;
 }
 
@@ -90,28 +91,4 @@ function mapV4(day_of_week) {
   if (day_of_week === 0) { return 7 } else {
     return day_of_week
   }
-}
-
-function printToCSV(data) {
-  mkdirp(dir, function(err) { 
-    if (err) console.error(err)
-  });
-
-  const csvWriter = createCsvWriter({
-    header: [
-        {id: 'day_of_week', title: 'Day Of Week'},
-        {id: 'start_time', title: 'Start Time'},
-        {id: 'end_time', title: 'End Time'},
-        {id: 'avaliable', title: 'Available'},
-        {id: 'time_zone', title: 'Time Zone'},
-        {id: 'resourceUri', title: 'Resource Uri'},
-    ],
-    append: false,
-    path: dir + '/service-hours.csv'
-  });
-    
-  csvWriter.writeRecords(data)
-    .then(() => {
-      console.log('...Done');
-    });
 }

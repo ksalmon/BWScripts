@@ -1,29 +1,26 @@
 const inq = require('inquirer')
-const csv = require('csv-writer').createObjectCsvWriter
 
 const { constructV3ApiEndpoint } = require('../utils/api/apiHelpers.js')
 const { GET_STORES_ENDPOINT } = require('../utils/api/endpoints.js')
 const api = require('../utils/api/callApi.js')
 
-const { clientDirectory, createHeaders } = require('../utils/helpers/csvHelpers.js')
+const { clientDirectory, csvWriter } = require('../utils/helpers/csvHelpers.js')
 
 const questionPrompt = [
   { type: 'input', name: 'apiKey', message: 'Enter a valid API Key', validate: (apiKey) => {
     return apiKey !== '';
-  }},
-  { type: 'input', name: 'filename', message: 'What will the filename be? Please include slash. Leave blank for default: "/stores.csv"' }
+  }}
 ]
 
 // Get Stores from CSV
 const init = (data) => {
   let directory,
-      filename,
       apiKey
   
   const defaultfilename = 'stores.csv'
   inq.prompt(questionPrompt)
     .then(async (answers) => {
-      filename = (answers.filename == '') ? defaultfilename : answers.filename
+      filename = defaultfilename
       directory = clientDirectory(data.company, data.environment, filename)
       const endpoint = constructV3ApiEndpoint(data.company, data.environment, GET_STORES_ENDPOINT)
       apiKey = answers.apiKey
@@ -61,31 +58,30 @@ const init = (data) => {
 
     const formatStores = (strs) => {
       let stores = [];
+      let store_services = [];
       strs.forEach(str => {
         let store = {
           'id': str.id,
           'number': str.number,
           'slug': str.slug,
-          'email': str.email,
-          'phone_number': str.phone_number,
           'service_ids': str.service_ids,
           'feature_ids': str.feature_ids,
+          'resourceUri': '/organizations/' + str.organization_nextgen_id + '/locations/' + str.nextgen_id
         }
+        str.store_services.forEach(svc => {
+          let store_service = {
+            'id': svc.id,
+            'service_id': svc.service_id,
+            'store_id': svc.store_id,
+            'resourceUri': '/organizations/' + str.organization_nextgen_id + svc.nextgen_uri
+          }
+          store_services.push(store_service)
+        })
         stores.push(store)
       });
 
-      printToCSV(stores)
-    }
-
-    const printToCSV = (strs) => {
-      const keys = createHeaders(strs)
-
-      const csvWriter = csv({
-        header: keys,
-        append: false,
-        path: directory
-      })
-      csvWriter.writeRecords(strs).then(() => console.log(filename + ' successfully written to ' + directory))
+      csvWriter(stores, false, filename, directory)
+      csvWriter(store_services, false, 'store_services_for_hours.csv', clientDirectory(data.company, data.environment, 'store_services_for_hours.csv'))
     }
 }
 

@@ -70,15 +70,15 @@ const scriptChoice = (auth, data) => {
               updateLocales.init(auth, data)
           }
       })
-  // } else if(data.type = 'Organizations') {
-  //   inq.prompt(questions.organizationsQuestions)
-  //     .then(answer => {
-  //       if(answer.organizationsPrompt == 'Get Organizations') {
-  //         getOrganizations.init(auth, data)
-  //       } else if(answer.organizationsPrompt == 'Update Organizations') {
-  //         updateOrganizations.init(auth, data)
-  //       }
-  //     })
+  } else if(data.type == 'Organizations') {
+    inq.prompt(questions.organizationsQuestions)
+      .then(answer => {
+        if(answer.organizationsPrompt == 'Get Organizations') {
+          getOrganizations.init(auth, data)
+        } else if(answer.organizationsPrompt == 'Update Organizations') {
+          updateOrganizations.init(auth, data)
+        }
+      })
   } else if(data.type == 'Store Services') {
       inq.prompt(questions.servicesQuestions)
       .then(answer => {

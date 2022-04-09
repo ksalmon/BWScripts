@@ -22,6 +22,6 @@
     "isomorphic-fetch": "^2.2.1",
     "json-stringify": "^1.0.0",
     "mkdirp": "^0.5.1",
-    "moment": "^2.22.2"
+    "moment": "^2.29.2"
   }
 }
